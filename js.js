@@ -121,7 +121,7 @@ window.addEventListener("DOMContentLoaded", function(){
                 var ctx = canvas.getContext('2d');
                 
                 ctx.drawImage( trueImg, 0, 0 );
-                var dataURL = canvas.toDataURL();
+                var dataURL = canvas.toDataURL('image/jpeg',0.7);
                 document.getElementById("outputTrue").innerHTML = "<img src='" + dataURL + "'>";
             }
             trueImg.src = reader.result;
@@ -146,7 +146,7 @@ window.addEventListener("DOMContentLoaded", function(){
                 var ctx = canvas.getContext('2d');
                 
                 ctx.drawImage( IRImg, 0, 0 );
-                var dataURL = canvas.toDataURL();
+                var dataURL = canvas.toDataURL('image/jpeg',0.7);
                 document.getElementById("outputIR").innerHTML = "<img src='" + dataURL + "'>";
             }
             IRImg.src = reader.result;
@@ -199,14 +199,14 @@ function processImage() {
     // Show Image result
     var dataURL = null;
     ctx.putImageData( falseImgData, 0, 0 );
-    dataURL = canvas.toDataURL();
+    dataURL = canvas.toDataURL('image/jpeg',0.7);
     document.getElementById("outputFalse").innerHTML = "<img src='" + dataURL + "'>";
     
     ctx.putImageData( naturalImgData, 0, 0 );
-    dataURL = canvas.toDataURL();
+    dataURL = canvas.toDataURL('image/jpeg',0.7);
     document.getElementById("outputNatural").innerHTML = "<img src='" + dataURL + "'>";
     
     ctx.putImageData( NDVIImgData, 0, 0 );
-    dataURL = canvas.toDataURL();
+    dataURL = canvas.toDataURL('image/jpeg',0.7);
     document.getElementById("outputNDVI").innerHTML = "<img src='" + dataURL + "'>";
 }
