@@ -1,8 +1,7 @@
+
 body {
 	font-family: arial, sans-serif;
 	font-size: 12pt;
-	padding: 0px;
-	margin: 0px;
 }
 
 main {
@@ -11,6 +10,54 @@ main {
 	color: #303030;
 }
 
+.inputButton {
+    display: none;
+}
+
+/* https://copypet.jp/417/ を参考にさせていただきました */
+.inputButtonLabel {
+	display: block;
+	padding: 0.8em;
+    margin: 0.4em;
+	text-align: center;
+	text-decoration: none;
+	color: #fff;
+	border: 2px solid #1E90FF;
+    background: #1E90FF;
+	border-radius: 5px;
+	transition: .2s;
+}
+
+.inputButtonLabel:hover {
+	background: #fff;
+	color: #1E90FF;
+}
+
+.execButtonLabel {
+	display: block;
+	padding: 0.8em;
+    margin: 0.4em;
+	text-align: center;
+	text-decoration: none;
+	color: #fff;
+	border: 2px solid #F2428D;
+    background: #F2428D;
+	border-radius: 5px;
+	transition: .2s;
+}
+
+.execButtonLabel:hover {
+	background: #fff;
+	color: #F2428D;
+}
+
+.buttonbox {
+	display: -webkit-flex;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	flex-direction: row;
+}
 
 img {
 	max-width: 100%;
@@ -24,7 +71,7 @@ img {
 .figbox {
 	display: -webkit-flex;
 	display: flex;
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
 	justify-content: center;
 	flex-direction: row;
 }
@@ -36,25 +83,26 @@ figure {
 	flex-direction: column;
 	
 	/* 以下の設定で横方向の枠も拡張するようになる */
-	min-width: fit-content;
+	/*min-width: fit-content;*/
+    min-width: 300px;
 	flex-grow: 1;
 	flex-basis: 0;
 	
 	/* IE11でflexboxで画像を縮めるために必要 */
-	min-width: 0%;
+	/*min-width: 0%;*/
 	
 	break-inside: avoid;
 	text-align: center;
 	padding: 3px;
 	
-	margin-left: 5px;
-	margin-right: 5px;
+	margin-left: 3px;
+	margin-right: 3px;
 
-	margin-top: 5px;
-	margin-bottom: 5px;
+	margin-top: 3px;
+	margin-bottom: 3px;
 	
 	background-color: white;
-	box-shadow: 0px 0px 5px #999999;
+	box-shadow: 0px 0px 3px #999999;
 }
 
 figure a {
