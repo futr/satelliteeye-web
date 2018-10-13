@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Satellite Eye WEB</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="main.css">
+  <script src="js.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<main role="main">
+
+<input type="file" id="selectTrue" accept="image/*">
+<input type="file" id="selectIR" accept="image/*">
+<input type='button' id='processButton' value='処理開始' onclick='processImage();' />
+
+<div class="figbox">
+<figure>
+<div id="outputTrue"></div>
+<figcaption>
+可視光画像
+</figcaption>
+</figure>
+<figure>
+<div id="outputIR"></div>
+<figcaption>
+赤外画像
+</figcaption>
+</figure>
+</div>
+
+<div class="figbox">
+<figure>
+<div id="outputFalse"></div>
+<figcaption>
+フォルスカラー
+</figcaption>
+</figure>
+<figure>
+<div id="outputNatural"></div>
+<figcaption>
+ナチュラルカラー
+</figcaption>
+</figure>
+<figure>
+<div id="outputNDVI"></div>
+<figcaption>
+NDVI
+</figcaption>
+</figure>
+</div>
+
+</main>
+</body>
+</html>
+
