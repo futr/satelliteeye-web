@@ -10,16 +10,22 @@
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <link rel="stylesheet" href="./mdl/material.min.css">
+  <script src="./mdl/material.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
 <main role="main">
 
-<p>開発中のため異常な動作をする可能性があります。マイクロソフト製のブラウザでは動作しない可能性が高いです。</p>
+<p style="font-size: 10px;margin: 3px;padding: 0px;">開発中のため異常な動作をする可能性があります。マイクロソフト製のブラウザでは動作しない可能性が高いです。</p>
 
 <div class="buttonbox">
-<label class="inputButtonLabel"><input type="file" class="inputButton" id="selectTrue" accept="image/*">ファイルを選択（可視光）</label>
-<label class="inputButtonLabel"><input type="file" class="inputButton" id="selectIR" accept="image/*">ファイルを選択（近赤外）</label>
-<label class="execButtonLabel"><input type="button" id="processButton" class="inputButton" value="処理開始" onclick='processImage();' />処理開始</label>
+<input type="file" class="inputButton" id="selectTrue" accept="image/*">
+<input type="file" class="inputButton" id="selectIR" accept="image/*">
+<div class="buttonWrap"><button id="selectTrueButton" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" onclick="document.getElementById( 'selectTrue' ).click();">可視光画像を選択</button></div>
+<div class="buttonWrap"><button id="selectIRButton" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" onclick="document.getElementById( 'selectIR' ).click();">近赤外画像を選択</button></div>
+<div class="buttonWrap"><button id="processButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="processImage();">処理開始</button></div>
+<div class="buttonWrap"><div id="processSpinner" class="mdl-spinner mdl-js-spinner"></div></div>
 </div>
 
 <div class="progressBox"></div>

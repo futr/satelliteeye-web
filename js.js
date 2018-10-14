@@ -4,6 +4,8 @@
 // http://jsfiddle.net/z3JtC/4
 // https://stackoverflow.com/questions/13938686/can-i-load-a-local-file-into-an-html-canvas-element
 // https://codepen.io/tuanitpro/pen/wJZJbp
+// https://weworkweplay.com/play/saving-html5-canvas-as-image/
+// https://codepen.io/noahblon/post/a-practical-guide-to-flexbox-understanding-space-between-the-unsung-hero
 // あとモジラのチュートリアルを見つつ、むりくり書きました
 // https://developer.mozilla.org/ja/docs/Web/Guide/HTML/Canvas_tutorial/Basic_usage
 //
@@ -121,7 +123,9 @@ ImageHandler.prototype.handleEvent = function( event ) {
     var file = event.target.files;
     var reader = new FileReader();
  
-    reader.readAsDataURL(file[0]);
+    if ( file[0] != "" ) {
+        reader.readAsDataURL(file[0]);
+    }
 
     reader.onload = function(){
         originImg.onload = function() {
@@ -130,13 +134,13 @@ ImageHandler.prototype.handleEvent = function( event ) {
             var ih = originImg.height / originImg.width * IMG_WIDTH;
             
             // Show img
-            var canvas = document.createElement("canvas");
+            var canvas = document.createElement( "canvas" );
             canvas.width = iw;
             canvas.height = ih;
-            var ctx = canvas.getContext('2d');
+            var ctx = canvas.getContext( "2d" );
             
             ctx.drawImage( originImg, 0, 0, iw, ih );
-            var dataURL = canvas.toDataURL();
+            var dataURL = canvas.toDataURL( 'image/jpeg', 0.7 );
             document.getElementById( parent.outputName ).innerHTML = "<img src='" + dataURL + "'>";
             
             parent.img.src = dataURL;
@@ -147,11 +151,11 @@ ImageHandler.prototype.handleEvent = function( event ) {
 
 window.addEventListener("DOMContentLoaded", function(){
     // Load a true image
-    var selectTrue = document.getElementById("selectTrue");
+    var selectTrue = document.getElementById( "selectTrue" );
     var trueImgHandler = new ImageHandler( trueImg, "outputTrue" );
     selectTrue.addEventListener( "change", trueImgHandler, false );
     
-    var selectIR = document.getElementById("selectIR");
+    var selectIR = document.getElementById( "selectIR" );
     var IRImgHandler = new ImageHandler( IRImg, "outputIR" );
     selectIR.addEventListener( "change", IRImgHandler, false );
 });
@@ -159,15 +163,17 @@ window.addEventListener("DOMContentLoaded", function(){
 function processImage() {
     // Check images have been loaded
     if ( !trueImg.src || !IRImg.src ) {
+        alert( "可視光画像と近赤外画像を選択してください" );
         return;
     }
     
     // Disable buttons
-    setButtonEnable( "selectTrue", false );
-    setButtonEnable( "selectIR", false );
+    setButtonEnable( "selectTrueButton", false );
+    setButtonEnable( "selectIRButton", false );
     setButtonEnable( "processButton", false );
     
     // Show progress
+    showProcessSpinner( true );
     
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext('2d');
@@ -206,25 +212,34 @@ function processImage() {
     createNDVIImage( trueImgData.data, IRImgData.data, NDVIImgData.data, w, h );
     
     // Show Image result
-    var dataURL = null;
-    ctx.putImageData( falseImgData, 0, 0 );
-    dataURL = canvas.toDataURL('image/jpeg',0.7);
-    document.getElementById("outputFalse").innerHTML = "<img src='" + dataURL + "'>";
-    
-    ctx.putImageData( naturalImgData, 0, 0 );
-    dataURL = canvas.toDataURL('image/jpeg',0.7);
-    document.getElementById("outputNatural").innerHTML = "<img src='" + dataURL + "'>";
-    
-    ctx.putImageData( NDVIImgData, 0, 0 );
-    dataURL = canvas.toDataURL('image/jpeg',0.7);
-    document.getElementById("outputNDVI").innerHTML = "<img src='" + dataURL + "'>";
+    showResultImage( canvas, ctx, falseImgData, "outputFalse" );
+    showResultImage( canvas, ctx, naturalImgData, "outputNatural" );
+    showResultImage( canvas, ctx, NDVIImgData, "outputNDVI" );
     
     // Enable buttons
-    setButtonEnable( "selectTrue", true );
-    setButtonEnable( "selectIR", true );
+    setButtonEnable( "selectTrueButton", true );
+    setButtonEnable( "selectIRButton", true );
     setButtonEnable( "processButton", true );
+    
+    // Hide spinner
+    showProcessSpinner( false );
 }
+
+function showResultImage( canvas, ctx, imgData, id ) {
+    ctx.putImageData( imgData, 0, 0 );
+    var dataURL = canvas.toDataURL('image/jpeg',0.7);
+    // var dataURL = canvas.toDataURL();
+    document.getElementById( id ).innerHTML = "<img src='" + dataURL + "'>";
+} 
 
 function setButtonEnable( buttonName, status ) {
     document.getElementById( buttonName ).disabled = !status;
+}
+
+function showProcessSpinner( status ) {
+    if ( status ) {
+        document.getElementById( "processSpinner" ).classList.add( "is-active" );
+    } else {
+        document.getElementById( "processSpinner" ).classList.remove( "is-active" );
+    }
 }
