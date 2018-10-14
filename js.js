@@ -227,8 +227,7 @@ function processImage() {
 
 function showResultImage( canvas, ctx, imgData, id ) {
     ctx.putImageData( imgData, 0, 0 );
-    var dataURL = canvas.toDataURL('image/jpeg',0.7);
-    // var dataURL = canvas.toDataURL();
+    var dataURL = canvas.toDataURL( 'image/jpeg', 0.7 );
     document.getElementById( id ).innerHTML = "<img src='" + dataURL + "'>";
 } 
 

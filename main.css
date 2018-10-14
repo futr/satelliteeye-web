@@ -18,6 +18,10 @@ main {
     display: none;
 }
 
+.warnText {
+	font-size: 10px;margin: 3px;padding: 0px;
+}
+
 .buttonbox {
 	display: -webkit-flex;
 	display: flex;
@@ -111,6 +115,68 @@ figcaption {
 	
 	/* IE11でflexboxで画像キャプションを縮めるために必要 */
 	max-width: 100%;
+}
+
+/* 印刷時に飾りを取り除いて、２段組にする */
+@media print {	
+	@page {
+		size: landscape;
+	}
+
+	body {
+		padding: 0px;
+		margin: 0px;
+		font-size: 11.5pt;
+	}
+	
+	main {
+		padding: 5px;
+		margin: 0px;
+	
+		border-style: none;
+		box-shadow: none;
+	}
+
+	.warnText {
+		display: none;
+	}
+	
+	.buttonbox {
+		display: none;
+	}
+
+	figcaption {
+		font-size: 10pt;
+	}
+	
+	.inputbox {
+		/* firefoxでdivを分解しきらないみたい(画像がはみ出る)なのでblockにする */
+		flex-wrap: nowrap;
+	}
+
+	.resultbox {
+		/* firefoxでdivを分解しきらないみたい(画像がはみ出る)なのでblockにする */
+		flex-wrap: nowrap;
+	}
+
+	figure {
+		/* flexbox内で画像をページ境界で分解してしまうことがあるので、無効にしておく */
+		/* 今のところ、figureとaをblockに戻しておけば図が分解されることはない */
+		display: block;
+		
+		padding: 5px;
+		box-shadow: none;
+		border: 1px gray;
+	}
+	
+	figure a {
+		/* flexbox内で画像をページ境界で分解してしまうことがあるので、無効にしておく */
+		display: inline-block;
+	}
+	
+	figure.result {
+		min-width: 0px;
+	}
 }
 
 
