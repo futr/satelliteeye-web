@@ -102,7 +102,7 @@ var createNDVIImage = function( trueSrc, IRSrc, dest, w, h ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
             
-            var val = ( IRSrc[idx + R] - trueSrc[idx + R] ) / ( IRSrc[idx + R] + trueSrc[idx + R] ) * PMAX;
+            var val = ( ( IRSrc[idx + R] - trueSrc[idx + R] ) / ( IRSrc[idx + R] + trueSrc[idx + R] ) + 1 ) / 2 * PMAX;
             
             dest[idx + R] = val;
             dest[idx + G] = val;
@@ -173,7 +173,7 @@ var mouseMoveOnNDVIImg = function( evt ) {
     
 	var px = NDVICanvas.getContext('2d').getImageData( ix, iy, 1, 1 ); 
     
-    document.getElementById( "NDVIPixelValue" ).innerHTML = "NDVI値 : " + ( px.data[0] / PMAX ).toFixed( 3 );
+    document.getElementById( "NDVIPixelValue" ).innerHTML = "NDVI値 : " + ( px.data[0] / PMAX * 2 - 1 ).toFixed( 3 );
 }
 
 window.addEventListener("DOMContentLoaded", function(){
