@@ -208,15 +208,15 @@ function processImage() {
     // Show Image result
     var dataURL = null;
     ctx.putImageData( falseImgData, 0, 0 );
-    dataURL = canvas.toDataURL();
+    dataURL = canvas.toDataURL('image/jpeg',0.7);
     document.getElementById("outputFalse").innerHTML = "<img src='" + dataURL + "'>";
     
     ctx.putImageData( naturalImgData, 0, 0 );
-    dataURL = canvas.toDataURL();
+    dataURL = canvas.toDataURL('image/jpeg',0.7);
     document.getElementById("outputNatural").innerHTML = "<img src='" + dataURL + "'>";
     
     ctx.putImageData( NDVIImgData, 0, 0 );
-    dataURL = canvas.toDataURL();
+    dataURL = canvas.toDataURL('image/jpeg',0.7);
     document.getElementById("outputNDVI").innerHTML = "<img src='" + dataURL + "'>";
     
     // Enable buttons
