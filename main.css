@@ -2,12 +2,15 @@
 body {
 	font-family: arial, sans-serif;
 	font-size: 12pt;
+    margin: 0px;
+    padding: 0px;
 }
 
 main {
 	display: block;		/* IE対処 */
 	background-color: white;
 	color: #303030;
+    padding: 2px;
 }
 
 .inputButton {
@@ -68,7 +71,15 @@ img {
 }
 
 /* flexboxの入れ子で、図とキャプションの配置関係を作っている */
-.figbox {
+.inputbox {
+	display: -webkit-flex;
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: center;
+	flex-direction: row;
+}
+
+.resultbox {
 	display: -webkit-flex;
 	display: flex;
 	flex-wrap: wrap;
@@ -84,7 +95,7 @@ figure {
 	
 	/* 以下の設定で横方向の枠も拡張するようになる */
 	/*min-width: fit-content;*/
-    min-width: 300px;
+    /*min-width: 300px;*/
 	flex-grow: 1;
 	flex-basis: 0;
 	
@@ -93,7 +104,7 @@ figure {
 	
 	break-inside: avoid;
 	text-align: center;
-	padding: 3px;
+	padding: 0px;
 	
 	margin-left: 3px;
 	margin-right: 3px;
@@ -103,6 +114,10 @@ figure {
 	
 	background-color: white;
 	box-shadow: 0px 0px 3px #999999;
+}
+
+figure.result {
+    min-width: 300px;
 }
 
 figure a {
@@ -120,7 +135,7 @@ figure a {
 }
 
 figcaption {
-	padding-top: 2px;
+	padding-top: 1px;
 	text-align: center;
 	color: #505050;
 	

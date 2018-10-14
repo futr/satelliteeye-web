@@ -10,17 +10,23 @@
 // 画像が大きい場合遅すぎるのでなんとかしたい
 // 多分URL変換が重い?
 //
+// オブジェクト？は参照渡しが基本と考えるが、
+// 例えば
+// parent.img = new Image();
+// をすると、引数として渡したグローバルなポインタを書きかえて欲しいが、実際は参照が書き換わるだけ。newは参照の書き換え？
+//
 
 const R = 0;
 const G = 1;
 const B = 2;
 const A = 3;
 const PMAX = 255;
+const IMG_WIDTH = 1024;
 
-var trueImg = null;
-var IRImg = null;
-var falseImg = null;
-var NDVIImg = null;
+var trueImg = new Image();
+var IRImg = new Image();
+var falseImg = new Image();
+var NDVIImg = new Image();
 
 var normalizeColor = function( src, dest, w, h ) {
     var mins = [PMAX,PMAX,PMAX];
@@ -101,64 +107,67 @@ var createNDVIImage = function( trueSrc, IRSrc, dest, w, h ) {
         }
     }
 }
+
+// Image Handler class
+function ImageHandler( img, name )
+{
+    this.outputName = name;
+    this.img = img;
+}
+
+ImageHandler.prototype.handleEvent = function( event ) {
+    var parent = this;
+    var originImg = new Image();
+    var file = event.target.files;
+    var reader = new FileReader();
  
+    reader.readAsDataURL(file[0]);
+
+    reader.onload = function(){
+        originImg.onload = function() {
+            // Calc size
+            var iw = IMG_WIDTH;
+            var ih = originImg.height / originImg.width * IMG_WIDTH;
+            
+            // Show img
+            var canvas = document.createElement("canvas");
+            canvas.width = iw;
+            canvas.height = ih;
+            var ctx = canvas.getContext('2d');
+            
+            ctx.drawImage( originImg, 0, 0, iw, ih );
+            var dataURL = canvas.toDataURL();
+            document.getElementById( parent.outputName ).innerHTML = "<img src='" + dataURL + "'>";
+            
+            parent.img.src = dataURL;
+        }
+        originImg.src = reader.result;
+    }
+}
+
 window.addEventListener("DOMContentLoaded", function(){
     // Load a true image
     var selectTrue = document.getElementById("selectTrue");
-    selectTrue.addEventListener("change", function(evt) {
-        var file = evt.target.files;
-        var reader = new FileReader();
- 
-        reader.readAsDataURL(file[0]);
-
-        reader.onload = function(){
-            trueImg = new Image();            
-            trueImg.onload = function() {
-                // Show img
-                var canvas = document.createElement("canvas");
-                canvas.width = trueImg.width;
-                canvas.height = trueImg.height;
-                var ctx = canvas.getContext('2d');
-                
-                ctx.drawImage( trueImg, 0, 0 );
-                var dataURL = canvas.toDataURL();
-                document.getElementById("outputTrue").innerHTML = "<img src='" + dataURL + "'>";
-            }
-            trueImg.src = reader.result;
-        }
-    }, false );
-
-    // Load a IR image
+    var trueImgHandler = new ImageHandler( trueImg, "outputTrue" );
+    selectTrue.addEventListener( "change", trueImgHandler, false );
+    
     var selectIR = document.getElementById("selectIR");
-    selectIR.addEventListener("change", function(evt) {
-        var file = evt.target.files;
-        var reader = new FileReader();
- 
-        reader.readAsDataURL(file[0]);
-
-        reader.onload = function(){
-            IRImg = new Image();            
-            IRImg.onload = function() {
-                // Show img
-                var canvas = document.createElement("canvas");
-                canvas.width = IRImg.width;
-                canvas.height = IRImg.height;
-                var ctx = canvas.getContext('2d');
-                
-                ctx.drawImage( IRImg, 0, 0 );
-                var dataURL = canvas.toDataURL();
-                document.getElementById("outputIR").innerHTML = "<img src='" + dataURL + "'>";
-            }
-            IRImg.src = reader.result;
-        }
-    }, false );
+    var IRImgHandler = new ImageHandler( IRImg, "outputIR" );
+    selectIR.addEventListener( "change", IRImgHandler, false );
 });
 
 function processImage() {
     // Check images have been loaded
-    if ( !trueImg || !IRImg ) {
+    if ( !trueImg.src || !IRImg.src ) {
         return;
     }
+    
+    // Disable buttons
+    setButtonEnable( "selectTrue", false );
+    setButtonEnable( "selectIR", false );
+    setButtonEnable( "processButton", false );
+    
+    // Show progress
     
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext('2d');
@@ -209,4 +218,13 @@ function processImage() {
     ctx.putImageData( NDVIImgData, 0, 0 );
     dataURL = canvas.toDataURL();
     document.getElementById("outputNDVI").innerHTML = "<img src='" + dataURL + "'>";
+    
+    // Enable buttons
+    setButtonEnable( "selectTrue", true );
+    setButtonEnable( "selectIR", true );
+    setButtonEnable( "processButton", true );
+}
+
+function setButtonEnable( buttonName, status ) {
+    document.getElementById( buttonName ).disabled = !status;
 }

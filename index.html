@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Satellite Eye WEB</title>
+  <title>SatelliteEye WEB</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="main.css">
   <script src="js.js"></script>
@@ -14,13 +14,17 @@
 <body>
 <main role="main">
 
+<p>開発中のため異常な動作をする可能性があります。マイクロソフト製のブラウザでは動作しない可能性が高いです。</p>
+
 <div class="buttonbox">
 <label class="inputButtonLabel"><input type="file" class="inputButton" id="selectTrue" accept="image/*">ファイルを選択（可視光）</label>
 <label class="inputButtonLabel"><input type="file" class="inputButton" id="selectIR" accept="image/*">ファイルを選択（近赤外）</label>
-<label class="execButtonLabel"><input type='button' id='processButton' class="inputButton" value='処理開始' onclick='processImage();' />処理開始</label>
+<label class="execButtonLabel"><input type="button" id="processButton" class="inputButton" value="処理開始" onclick='processImage();' />処理開始</label>
 </div>
 
-<div class="figbox">
+<div class="progressBox"></div>
+
+<div class="inputbox">
 <figure>
 <div id="outputTrue"></div>
 <figcaption>
@@ -35,20 +39,20 @@
 </figure>
 </div>
 
-<div class="figbox">
-<figure>
+<div class="resultbox">
+<figure class="result">
 <div id="outputFalse"></div>
 <figcaption>
 フォルスカラー
 </figcaption>
 </figure>
-<figure>
+<figure class="result">
 <div id="outputNatural"></div>
 <figcaption>
 ナチュラルカラー
 </figcaption>
 </figure>
-<figure>
+<figure class="result">
 <div id="outputNDVI"></div>
 <figcaption>
 NDVI
