@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>SatelliteEye WEB</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="main.css">
   <script src="js.js"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+    
   <link rel="stylesheet" href="./mdl/material.min.css">
   <script src="./mdl/material.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  
+  <link rel="stylesheet" href="main.css">
 </head>
 <body>
 <main role="main">
@@ -25,42 +24,42 @@
 <div class="buttonWrap"><button id="selectTrueButton" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" onclick="document.getElementById( 'selectTrue' ).click();">可視光画像を選択</button></div>
 <div class="buttonWrap"><button id="selectIRButton" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" onclick="document.getElementById( 'selectIR' ).click();">近赤外画像を選択</button></div>
 <div class="buttonWrap"><button id="processButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="processImage();">処理開始</button></div>
-<div class="buttonWrap"><div id="processSpinner" class="mdl-spinner mdl-js-spinner"></div></div>
+<!--<div class="buttonWrap"><div id="processSpinner" class="mdl-spinner mdl-js-spinner"></div></div>-->
 </div>
 
 <div class="inputbox">
 <figure>
-<div id="outputTrue"></div>
+<img id="outputTrue">
 <figcaption>
-可視光画像
+<a id="outputTrueA" download="true.jpeg">可視光画像</a>
 </figcaption>
 </figure>
 <figure>
-<div id="outputIR"></div>
+<img id="outputIR">
 <figcaption>
-赤外画像
+<a id="outputIRA" download="ir.jpeg">赤外画像</a>
 </figcaption>
 </figure>
 </div>
 
 <div class="resultbox">
 <figure class="result">
-<a id="outputFalseA" download="false.jpeg"><img id="outputFalse"></a>
+<img id="outputFalse">
 <figcaption>
-フォルスカラー
+<a id="outputFalseA" download="false.jpeg">フォルスカラー</a>
 </figcaption>
 </figure>
 <figure class="result">
-<a id="outputNaturalA" download="natural.jpeg"><img id="outputNatural"></a>
+<img id="outputNatural">
 <figcaption>
-ナチュラルカラー
+<a id="outputNaturalA" download="natural.jpeg">ナチュラルカラー</a>
 </figcaption>
 </figure>
 <figure class="result">
-<a id="outputNDVIA" download="NDVI.jpeg"><img id="outputNDVI"></a>
+<img id="outputNDVI">
 <figcaption>
-NDVI
-<span id="NDVIPixelValue" class="mdl-tooltip mdl-tooltip--large mdl-tooltip--top" for="outputNDVI"></span>
+<a id="outputNDVIA" download="NDVI.jpeg">NDVI</a>
+<span class="tooltipspan"><span id="NDVIPixelValue" class="mdl-tooltip mdl-tooltip--large mdl-tooltip--top" for="outputNDVI"></span></span>
 </figcaption>
 </figure>
 </div>

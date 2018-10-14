@@ -147,7 +147,8 @@ ImageHandler.prototype.handleEvent = function( event ) {
             
             ctx.drawImage( originImg, 0, 0, iw, ih );
             var dataURL = canvas.toDataURL( 'image/jpeg', 0.7 );
-            document.getElementById( parent.outputName ).innerHTML = "<img src='" + dataURL + "'>";
+            document.getElementById( parent.outputName ).src = dataURL;
+            document.getElementById( parent.outputName + "A" ).href = dataURL;
             
             parent.img.src = dataURL;
             
@@ -198,13 +199,13 @@ function processImage() {
         return;
     }
     
-    // Disable buttons
-    setAllButtonEnable( false ); 
-    // Show progress
-    showProcessSpinner( true );
-    
-    var canvas = document.createElement("canvas");
-    var ctx = canvas.getContext('2d');
+    // Check IE
+    var ua = window.navigator.userAgent.toLowerCase();
+
+    if( ua.indexOf('msie') >= 0 || ua.indexOf('trident') >= 0 ) {
+        alert( "申し訳ありません\nInternetExplorerでは実行できません" );
+        return;
+    }
     
     var w = trueImg.width;
     var h = trueImg.height;
@@ -212,8 +213,22 @@ function processImage() {
     // Check size
     if ( w != IRImg.width || h != IRImg.height ) {
 		alert( "同じ大きさの画像を選択してください" );
+        
+        // Enable buttons
+        setAllButtonEnable( true ); 
+        // Hide spinner
+        showProcessSpinner( false );
+        
         return;
     }
+    
+    // Disable buttons
+    setAllButtonEnable( false ); 
+    // Show progress
+    showProcessSpinner( true );
+    
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext('2d');
     
     canvas.width = w;
     canvas.height = h;
@@ -276,9 +291,11 @@ function setButtonEnable( buttonName, status ) {
 }
 
 function showProcessSpinner( status ) {
+    /*
     if ( status ) {
         document.getElementById( "processSpinner" ).classList.add( "is-active" );
     } else {
         document.getElementById( "processSpinner" ).classList.remove( "is-active" );
     }
+    */
 }

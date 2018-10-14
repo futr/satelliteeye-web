@@ -82,6 +82,8 @@ figure {
 	
 	/* IE11でflexboxで画像を縮めるために必要 */
 	/*min-width: 0%;*/
+    
+    max-width: 700px;
 	
 	break-inside: avoid;
 	text-align: center;
@@ -101,20 +103,6 @@ figure.result {
     min-width: 300px;
 }
 
-figure a {
-	display: -webkit-flex;
-	display: flex;
-
-	/* IE11でflexboxで画像を縮めるために必要 */
-	max-width: 100%;
-	min-height: 0%;
-
-	justify-content: center;
-	flex-direction: column;
-
-	flex-grow: 1;
-}
-
 figcaption {
 	padding-top: 1px;
 	text-align: center;
@@ -127,7 +115,7 @@ figcaption {
 /* 印刷時に飾りを取り除いて、２段組にする */
 @media print {	
 	@page {
-		size: landscape;
+		size: A4 landscape;
 	}
 
 	body {
@@ -143,6 +131,15 @@ figcaption {
 		border-style: none;
 		box-shadow: none;
 	}
+    
+    /* MDL MDLによる属性表示を無効化 */
+    a[href]:after {
+        content: "";
+    }
+
+    .tooltipnspan {
+        display: none;
+    }
 
 	.warnText {
 		display: none;
@@ -174,11 +171,8 @@ figcaption {
 		padding: 5px;
 		box-shadow: none;
 		border: 1px gray;
-	}
-	
-	figure a {
-		/* flexbox内で画像をページ境界で分解してしまうことがあるので、無効にしておく */
-		display: inline-block;
+        
+        max-width: initial;
 	}
 	
 	figure.result {
