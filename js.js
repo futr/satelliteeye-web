@@ -30,6 +30,8 @@ var IRImg = new Image();
 var falseImg = new Image();
 var NDVIImg = new Image();
 
+var NDVICanvas = null;
+
 var normalizeColor = function( src, dest, w, h ) {
     var mins = [PMAX,PMAX,PMAX];
     var maxs = [0,0,0];
@@ -149,6 +151,16 @@ ImageHandler.prototype.handleEvent = function( event ) {
     }
 }
 
+var mouseMoveOnNDVIImg = function( evt ) {
+	if ( !NDVICanvas ) return;
+	
+	var ix = evt.offsetX / target.width;
+	
+	NDVICanvas.getContext('2d').getImageData( , 0, 0 ); 
+	
+	console.log( evt.offsetY );
+}
+
 window.addEventListener("DOMContentLoaded", function(){
     // Load a true image
     var selectTrue = document.getElementById( "selectTrue" );
@@ -158,6 +170,10 @@ window.addEventListener("DOMContentLoaded", function(){
     var selectIR = document.getElementById( "selectIR" );
     var IRImgHandler = new ImageHandler( IRImg, "outputIR" );
     selectIR.addEventListener( "change", IRImgHandler, false );
+    
+    // Mouse event
+    var NDVIImgElement = document.getElementById( "outputNDVI" );
+    NDVIImgElement.addEventListener( "mousemove", mouseMoveOnNDVIImg );
 });
 
 function processImage() {
@@ -183,6 +199,7 @@ function processImage() {
     
     // Check size
     if ( w != IRImg.width || h != IRImg.height ) {
+		alert( "同じ大きさの画像を選択してください" );
         return;
     }
     
@@ -211,6 +228,13 @@ function processImage() {
     createNaturalImage( normTrueImgData.data, normIRImgData.data, naturalImgData.data, w, h );
     createNDVIImage( trueImgData.data, IRImgData.data, NDVIImgData.data, w, h );
     
+    // Create result canvas
+    NDVICanvas = document.createElement( "canvas" );
+    NDVICanvas.width = w;
+    NDVICanvas.height = h;
+    NDVICanvas.getContext('2d').putImageData( NDVIImageData, 0, 0 ); 
+    
+    
     // Show Image result
     showResultImage( canvas, ctx, falseImgData, "outputFalse" );
     showResultImage( canvas, ctx, naturalImgData, "outputNatural" );
@@ -228,7 +252,7 @@ function processImage() {
 function showResultImage( canvas, ctx, imgData, id ) {
     ctx.putImageData( imgData, 0, 0 );
     var dataURL = canvas.toDataURL( 'image/jpeg', 0.7 );
-    document.getElementById( id ).innerHTML = "<img src='" + dataURL + "'>";
+    document.getElementById( id ).src = dataURL;
 } 
 
 function setButtonEnable( buttonName, status ) {

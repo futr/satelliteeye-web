@@ -44,6 +44,13 @@ img {
 	min-height: 0%;
 }
 
+.imgcanvas {
+	height: 100%;
+	position: relative;
+	width: 100%;
+	z-index: 1;
+}
+
 /* flexboxの入れ子で、図とキャプションの配置関係を作っている */
 .inputbox {
 	display: -webkit-flex;
