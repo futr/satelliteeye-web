@@ -7,4 +7,5 @@ main
 *.pro.user*
 *.autosave
 *.swp
+*.orig
 tester/
