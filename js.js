@@ -125,12 +125,16 @@ ImageHandler.prototype.handleEvent = function( event ) {
     var file = event.target.files;
     var reader = new FileReader();
  
-    if ( file[0] != "" ) {
+    if ( file[0] ) {
         reader.readAsDataURL(file[0]);
     }
 
     reader.onload = function(){
         originImg.onload = function() {
+            // Disable UIs
+            setAllButtonEnable( false ); 
+            showProcessSpinner( true );
+            
             // Calc size
             var iw = IMG_WIDTH;
             var ih = originImg.height / originImg.width * IMG_WIDTH;
@@ -146,19 +150,29 @@ ImageHandler.prototype.handleEvent = function( event ) {
             document.getElementById( parent.outputName ).innerHTML = "<img src='" + dataURL + "'>";
             
             parent.img.src = dataURL;
+            
+            // Enable UIs
+            setAllButtonEnable( true ); 
+            showProcessSpinner( false );
         }
         originImg.src = reader.result;
     }
 }
 
 var mouseMoveOnNDVIImg = function( evt ) {
+    // Mouse move event handler of NDVI Image
 	if ( !NDVICanvas ) return;
 	
-	var ix = evt.offsetX / target.width;
+	var ix = evt.offsetX / evt.target.offsetWidth * NDVICanvas.width;
+    var iy = evt.offsetY / evt.target.offsetHeight * NDVICanvas.height;
 	
-	NDVICanvas.getContext('2d').getImageData( , 0, 0 ); 
-	
-	console.log( evt.offsetY );
+    if ( ix < 0 || iy < 0 || ix >= NDVICanvas.width || iy >= NDVICanvas.height ) {
+        return;
+    }
+    
+	var px = NDVICanvas.getContext('2d').getImageData( ix, iy, 1, 1 ); 
+    
+    document.getElementById( "NDVIPixelValue" ).innerHTML = "NDVI値 : " + ( px.data[0] / PMAX ).toFixed( 3 );
 }
 
 window.addEventListener("DOMContentLoaded", function(){
@@ -167,6 +181,7 @@ window.addEventListener("DOMContentLoaded", function(){
     var trueImgHandler = new ImageHandler( trueImg, "outputTrue" );
     selectTrue.addEventListener( "change", trueImgHandler, false );
     
+    // Load a NIR Image
     var selectIR = document.getElementById( "selectIR" );
     var IRImgHandler = new ImageHandler( IRImg, "outputIR" );
     selectIR.addEventListener( "change", IRImgHandler, false );
@@ -184,10 +199,7 @@ function processImage() {
     }
     
     // Disable buttons
-    setButtonEnable( "selectTrueButton", false );
-    setButtonEnable( "selectIRButton", false );
-    setButtonEnable( "processButton", false );
-    
+    setAllButtonEnable( false ); 
     // Show progress
     showProcessSpinner( true );
     
@@ -232,7 +244,7 @@ function processImage() {
     NDVICanvas = document.createElement( "canvas" );
     NDVICanvas.width = w;
     NDVICanvas.height = h;
-    NDVICanvas.getContext('2d').putImageData( NDVIImageData, 0, 0 ); 
+    NDVICanvas.getContext('2d').putImageData( NDVIImgData, 0, 0 ); 
     
     
     // Show Image result
@@ -241,10 +253,7 @@ function processImage() {
     showResultImage( canvas, ctx, NDVIImgData, "outputNDVI" );
     
     // Enable buttons
-    setButtonEnable( "selectTrueButton", true );
-    setButtonEnable( "selectIRButton", true );
-    setButtonEnable( "processButton", true );
-    
+    setAllButtonEnable( true ); 
     // Hide spinner
     showProcessSpinner( false );
 }
@@ -253,7 +262,14 @@ function showResultImage( canvas, ctx, imgData, id ) {
     ctx.putImageData( imgData, 0, 0 );
     var dataURL = canvas.toDataURL( 'image/jpeg', 0.7 );
     document.getElementById( id ).src = dataURL;
+    document.getElementById( id + "A" ).href = dataURL;
 } 
+
+function setAllButtonEnable( status ) {
+    setButtonEnable( "selectTrueButton", status );
+    setButtonEnable( "selectIRButton", status );
+    setButtonEnable( "processButton", status );
+}
 
 function setButtonEnable( buttonName, status ) {
     document.getElementById( buttonName ).disabled = !status;

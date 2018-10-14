@@ -17,7 +17,7 @@
 <body>
 <main role="main">
 
-<p class="warnText">開発中のため異常な動作をする可能性があります。マイクロソフト製のブラウザでは動作しない可能性が高いです。</p>
+<p class="warnText"><!--開発中のため異常な動作をする可能性があります。マイクロソフト製のブラウザでは動作しない可能性が高いです。--></p>
 
 <div class="buttonbox">
 <input type="file" class="inputButton" id="selectTrue" accept="image/*">
@@ -45,21 +45,22 @@
 
 <div class="resultbox">
 <figure class="result">
-<img id="outputFalse">
+<a id="outputFalseA" download="false.jpeg"><img id="outputFalse"></a>
 <figcaption>
 フォルスカラー
 </figcaption>
 </figure>
 <figure class="result">
-<img id="outputNatural">
+<a id="outputNaturalA" download="natural.jpeg"><img id="outputNatural"></a>
 <figcaption>
 ナチュラルカラー
 </figcaption>
 </figure>
 <figure class="result">
-<img id="outputNDVI">
+<a id="outputNDVIA" download="NDVI.jpeg"><img id="outputNDVI"></a>
 <figcaption>
 NDVI
+<span id="NDVIPixelValue" class="mdl-tooltip mdl-tooltip--large mdl-tooltip--top" for="outputNDVI"></span>
 </figcaption>
 </figure>
 </div>
