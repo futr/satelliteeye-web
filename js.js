@@ -29,10 +29,24 @@ var trueImg = new Image();
 var IRImg = new Image();
 var falseImg = new Image();
 var NDVIImg = new Image();
+var NDVICanvas = document.createElement( "canvas" );
+var imageWorker = null;
 
-var NDVICanvas = null;
+// あとから作ったので別々になってる
+var ImageContainer = {
+    trueimg : trueImg,
+    irimg : IRImg,
+    falseimg: falseImg,
+    ndviimg : NDVIImg,
+    ndvicanvas: NDVICanvas
+};
 
-var normalizeColor = function( src, dest, w, h ) {
+if ( window.worker ) {
+    // Create worker
+    imageWorker = new Worker( "worker.js" );
+}
+
+function normalizeColor( src, dest, w, h ) {
     var mins = [PMAX,PMAX,PMAX];
     var maxs = [0,0,0];
     
@@ -68,7 +82,7 @@ var normalizeColor = function( src, dest, w, h ) {
     }
 }
 
-var createFalseImage = function( trueSrc, IRSrc, dest, w, h ) {    
+function createFalseImage( trueSrc, IRSrc, dest, w, h ) {    
     // Create false image
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
@@ -82,7 +96,7 @@ var createFalseImage = function( trueSrc, IRSrc, dest, w, h ) {
     }
 }
 
-var createNaturalImage = function( trueSrc, IRSrc, dest, w, h ) {    
+function createNaturalImage( trueSrc, IRSrc, dest, w, h ) {    
     // Create Natural image
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
@@ -96,7 +110,7 @@ var createNaturalImage = function( trueSrc, IRSrc, dest, w, h ) {
     }
 }
 
-var createNDVIImage = function( trueSrc, IRSrc, dest, w, h ) {    
+function createNDVIImage( trueSrc, IRSrc, dest, w, h ) {    
     // Create NDVI image
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
@@ -160,7 +174,7 @@ ImageHandler.prototype.handleEvent = function( event ) {
     }
 }
 
-var mouseMoveOnNDVIImg = function( evt ) {
+function mouseMoveOnNDVIImg( evt ) {
     // Mouse move event handler of NDVI Image
 	if ( !NDVICanvas ) return;
 	
@@ -176,7 +190,17 @@ var mouseMoveOnNDVIImg = function( evt ) {
     document.getElementById( "NDVIPixelValue" ).innerHTML = "NDVI値 : " + ( px.data[0] / PMAX * 2 - 1 ).toFixed( 3 );
 }
 
-window.addEventListener("DOMContentLoaded", function(){
+window.addEventListener( "DOMContentLoaded", function() {
+    // Check IE
+    var ua = window.navigator.userAgent.toLowerCase();
+
+    if( ua.indexOf('msie') >= 0 || ua.indexOf('trident') >= 0 ) {
+        alert( "申し訳ありません\nInternetExplorerでは実行できません" );
+        // Disable buttons
+        setAllButtonEnable( false ); 
+        return;
+    }
+    
     // Load a true image
     var selectTrue = document.getElementById( "selectTrue" );
     var trueImgHandler = new ImageHandler( trueImg, "outputTrue" );
@@ -199,26 +223,12 @@ function processImage() {
         return;
     }
     
-    // Check IE
-    var ua = window.navigator.userAgent.toLowerCase();
-
-    if( ua.indexOf('msie') >= 0 || ua.indexOf('trident') >= 0 ) {
-        alert( "申し訳ありません\nInternetExplorerでは実行できません" );
-        return;
-    }
-    
     var w = trueImg.width;
     var h = trueImg.height;
     
     // Check size
     if ( w != IRImg.width || h != IRImg.height ) {
 		alert( "同じ大きさの画像を選択してください" );
-        
-        // Enable buttons
-        setAllButtonEnable( true ); 
-        // Hide spinner
-        showProcessSpinner( false );
-        
         return;
     }
     
@@ -256,7 +266,7 @@ function processImage() {
     createNDVIImage( trueImgData.data, IRImgData.data, NDVIImgData.data, w, h );
     
     // Create result canvas
-    NDVICanvas = document.createElement( "canvas" );
+    // NDVICanvas = document.createElement( "canvas" );
     NDVICanvas.width = w;
     NDVICanvas.height = h;
     NDVICanvas.getContext('2d').putImageData( NDVIImgData, 0, 0 ); 
@@ -276,7 +286,8 @@ function processImage() {
 function showResultImage( canvas, ctx, imgData, id ) {
     ctx.putImageData( imgData, 0, 0 );
     var dataURL = canvas.toDataURL( 'image/jpeg', 0.7 );
-    document.getElementById( id ).src = dataURL;
+    var img = document.getElementById( id );
+    img.src = dataURL;
     document.getElementById( id + "A" ).href = dataURL;
 } 
 

@@ -28,12 +28,12 @@ main {
 	flex-wrap: wrap;
 	justify-content: flex-start;
 	flex-direction: row;
-    margin: 5px;
+    margin: 3px;
     padding: 0px;
 }
 
 .buttonWrap {
-    margin: 3px;
+    margin: 2px;
 }
 
 img {
