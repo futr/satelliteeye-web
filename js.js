@@ -17,112 +17,65 @@
 // parent.img = new Image();
 // をすると、引数として渡したグローバルなポインタを書きかえて欲しいが、実際は参照が書き換わるだけ。newは参照の書き換え？
 //
+// Worker実装に挑戦中
+// とにかくJSではブロックしたりはできないらしい(UIスレッドとくっついてるから？)
+// 昔の人はどうやって実装してたんだろうか
+//
 
-const R = 0;
-const G = 1;
-const B = 2;
-const A = 3;
-const PMAX = 255;
 const IMG_WIDTH = 1024;
+const PMAX = 255;
 
+var imgW = 0;
+var imgH = 0;
 var trueImg = new Image();
 var IRImg = new Image();
 var falseImg = new Image();
-var NDVIImg = new Image();
 var NDVICanvas = document.createElement( "canvas" );
-var imageWorker = null;
+var NDVIImgData = null;
+var imgWkr = null;
 
-// あとから作ったので別々になってる
-var ImageContainer = {
-    trueimg : trueImg,
-    irimg : IRImg,
-    falseimg: falseImg,
-    ndviimg : NDVIImg,
-    ndvicanvas: NDVICanvas
+// 基底
+var ImgWorkerMessage = {
+    type: "NullMsg"
 };
 
-if ( window.worker ) {
+if ( window.Worker ) {
     // Create worker
-    imageWorker = new Worker( "worker.js" );
-}
-
-function normalizeColor( src, dest, w, h ) {
-    var mins = [PMAX,PMAX,PMAX];
-    var maxs = [0,0,0];
-    
-    // Search mins and maxs
-    for ( var y = 0; y < h; y++ ) {
-        for ( var x = 0; x < w; x++ ) {
-            var idx = ( y * w + x ) * 4;
-            var r = src[idx + R];
-            var g = src[idx + G];
-            var b = src[idx + B];
-            
-            if ( r > maxs[R] ) maxs[R] = r; 
-            if ( g > maxs[G] ) maxs[G] = g; 
-            if ( b > maxs[B] ) maxs[B] = b;
-            
-            if ( r < mins[R] ) mins[R] = r; 
-            if ( g < mins[G] ) mins[G] = g;  
-            if ( b < mins[B] ) mins[B] = b;  
-        }
+    try {
+        imgWkr = new Worker( "./worker.js" );
+    } catch ( e ) {
+        console.log( "Failed to start worker" );
     }
     
-    // Normalize
-    for ( var y = 0; y < h; y++ ) {
-        for ( var x = 0; x < w; x++ ) {
-            var idx = ( y * w + x ) * 4;
-
-            dest[idx + R] = ( src[idx + R] - mins[R] ) / ( maxs[R] - mins[R] ) * PMAX;
-            dest[idx + G] = ( src[idx + G] - mins[G] ) / ( maxs[G] - mins[G] ) * PMAX;
-            dest[idx + B] = ( src[idx + B] - mins[B] ) / ( maxs[B] - mins[B] ) * PMAX;
-            
-            dest[idx + A] = PMAX;
-        }
-    }
+    imgWkr.addEventListener( "message", messageReceived, false );
+} else {
+    alert( "Workerをサポートしていないブラウザでは動作しません" );
 }
 
-function createFalseImage( trueSrc, IRSrc, dest, w, h ) {    
-    // Create false image
-    for ( var y = 0; y < h; y++ ) {
-        for ( var x = 0; x < w; x++ ) {
-            var idx = ( y * w + x ) * 4;
-            
-            dest[idx + R] = IRSrc[idx + R];
-            dest[idx + G] = trueSrc[idx + R];
-            dest[idx + B] = trueSrc[idx + G];
-            dest[idx + A] = PMAX;
+// メッセージハンドラー
+function messageReceived( e ) {
+    var msgType = e.data.type;
+    
+    console.log( msgType );
+    
+    switch ( msgType ) {
+    case "SetResultImgData":
+        switch ( e.data.name ) {
+        case "outputFalse":
+            showResultImage( imgW, imgH, e.data.imgData, "outputFalse" );
+            break;
+        case "outputNatural":
+            showResultImage( imgW, imgH, e.data.imgData, "outputNatural" );
+            break;
+        case "outputNDVI":
+            NDVIImgData = e.data.imgData;
+            showResultImage( imgW, imgH, e.data.imgData, "outputNDVI" );
+            break;
         }
-    }
-}
-
-function createNaturalImage( trueSrc, IRSrc, dest, w, h ) {    
-    // Create Natural image
-    for ( var y = 0; y < h; y++ ) {
-        for ( var x = 0; x < w; x++ ) {
-            var idx = ( y * w + x ) * 4;
-            
-            dest[idx + R] = trueSrc[idx + R];
-            dest[idx + G] = IRSrc[idx + R];
-            dest[idx + B] = trueSrc[idx + G];
-            dest[idx + A] = PMAX;
-        }
-    }
-}
-
-function createNDVIImage( trueSrc, IRSrc, dest, w, h ) {    
-    // Create NDVI image
-    for ( var y = 0; y < h; y++ ) {
-        for ( var x = 0; x < w; x++ ) {
-            var idx = ( y * w + x ) * 4;
-            
-            var val = ( ( IRSrc[idx + R] - trueSrc[idx + R] ) / ( IRSrc[idx + R] + trueSrc[idx + R] ) + 1 ) / 2 * PMAX;
-            
-            dest[idx + R] = val;
-            dest[idx + G] = val;
-            dest[idx + B] = val;
-            dest[idx + A] = PMAX;
-        }
+        break;
+    case "CompleteProcess":
+        processCompleted();
+        break;
     }
 }
 
@@ -134,7 +87,9 @@ function ImageHandler( img, name )
 }
 
 ImageHandler.prototype.handleEvent = function( event ) {
-    var parent = this;
+    // 関数のprototypeが何かよくわからない
+    // http://maeharin.hatenablog.com/entry/20130215/javascript_prototype_chain
+    var obj = this;
     var originImg = new Image();
     var file = event.target.files;
     var reader = new FileReader();
@@ -161,10 +116,17 @@ ImageHandler.prototype.handleEvent = function( event ) {
             
             ctx.drawImage( originImg, 0, 0, iw, ih );
             var dataURL = canvas.toDataURL( 'image/jpeg', 0.7 );
-            document.getElementById( parent.outputName ).src = dataURL;
-            document.getElementById( parent.outputName + "A" ).href = dataURL;
+            document.getElementById( obj.outputName ).src = dataURL;
+            document.getElementById( obj.outputName + "A" ).href = dataURL;
             
-            parent.img.src = dataURL;
+            obj.img.src = dataURL;
+            
+            // Post input image to worker
+            var msg = Object.create( ImgWorkerMessage );
+            msg.type = "SetImg";
+            msg.imgData = ctx.getImageData( 0, 0, iw, ih );
+            msg.name = obj.outputName;
+            imgWkr.postMessage( msg );
             
             // Enable UIs
             setAllButtonEnable( true ); 
@@ -223,8 +185,10 @@ function processImage() {
         return;
     }
     
-    var w = trueImg.width;
-    var h = trueImg.height;
+    imgW = trueImg.width;
+    imgH = trueImg.height;
+    var w = imgW;
+    var h = imgH;
     
     // Check size
     if ( w != IRImg.width || h != IRImg.height ) {
@@ -237,45 +201,25 @@ function processImage() {
     // Show progress
     showProcessSpinner( true );
     
-    var canvas = document.createElement("canvas");
-    var ctx = canvas.getContext('2d');
+    // Post Image size
+    postImageSize( w, h );
     
-    canvas.width = w;
-    canvas.height = h;
-    
-    // Create ImageData
-    ctx.drawImage( trueImg, 0, 0 );
-    var trueImgData = ctx.getImageData( 0, 0, w, h );
-    var normTrueImgData = ctx.createImageData( w, h );
-    
-    ctx.drawImage( IRImg, 0, 0 );
-    var IRImgData = ctx.getImageData( 0, 0, w, h );
-    var normIRImgData = ctx.createImageData( w, h );
-    
-    var falseImgData = ctx.createImageData( w, h );
-    var naturalImgData = ctx.createImageData( w, h );
-    var NDVIImgData = ctx.createImageData( w, h );
-    
-    // Normalize
-    normalizeColor( trueImgData.data, normTrueImgData.data, w, h );
-    normalizeColor( IRImgData.data, normIRImgData.data, w, h );
-    
-    // Process
-    createFalseImage( normTrueImgData.data, normIRImgData.data, falseImgData.data, w, h );
-    createNaturalImage( normTrueImgData.data, normIRImgData.data, naturalImgData.data, w, h );
-    createNDVIImage( trueImgData.data, IRImgData.data, NDVIImgData.data, w, h );
-    
+    // Post start process
+    postStartProcess();
+}
+
+function postStartProcess() {
+    var msg = Object.create( ImgWorkerMessage );
+    msg.type = "DoProcess";
+    imgWkr.postMessage( msg );
+}
+
+function processCompleted() {
     // Create result canvas
     // NDVICanvas = document.createElement( "canvas" );
-    NDVICanvas.width = w;
-    NDVICanvas.height = h;
+    NDVICanvas.width = imgW;
+    NDVICanvas.height = imgH;
     NDVICanvas.getContext('2d').putImageData( NDVIImgData, 0, 0 ); 
-    
-    
-    // Show Image result
-    showResultImage( canvas, ctx, falseImgData, "outputFalse" );
-    showResultImage( canvas, ctx, naturalImgData, "outputNatural" );
-    showResultImage( canvas, ctx, NDVIImgData, "outputNDVI" );
     
     // Enable buttons
     setAllButtonEnable( true ); 
@@ -283,7 +227,21 @@ function processImage() {
     showProcessSpinner( false );
 }
 
-function showResultImage( canvas, ctx, imgData, id ) {
+function postImageSize( w, h ) {
+    var msg = Object.create( ImgWorkerMessage );
+    msg.type = "SetSize";
+    msg.w = w;
+    msg.h = h;
+    imgWkr.postMessage( msg );
+}
+
+function showResultImage( w, h, imgData, id ) {
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext('2d');
+    
+    canvas.width = w;
+    canvas.height = h;
+    
     ctx.putImageData( imgData, 0, 0 );
     var dataURL = canvas.toDataURL( 'image/jpeg', 0.7 );
     var img = document.getElementById( id );
@@ -302,11 +260,11 @@ function setButtonEnable( buttonName, status ) {
 }
 
 function showProcessSpinner( status ) {
-    /*
     if ( status ) {
         document.getElementById( "processSpinner" ).classList.add( "is-active" );
+        document.getElementById( "spinnerWrap" ).style = "display: block";
     } else {
         document.getElementById( "processSpinner" ).classList.remove( "is-active" );
+        document.getElementById( "spinnerWrap" ).style = "display: none";
     }
-    */
 }
