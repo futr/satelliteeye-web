@@ -211,6 +211,7 @@ figcaption {
 
 	.resultbox {
 		flex-wrap: nowrap;
+        page-break-inside: avoid;
 	}
 
     .allImages {
