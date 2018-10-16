@@ -141,7 +141,7 @@ function getShiftedValue( src, w, h, x, y, srcShiftX, srcShiftY ) {
         return [0, 0, 0, 0];
     } else {
         var idx = ( cy * w + cx ) * 4;
-        return src.slice( idx, idx + 3 );
+        return [src[idx + R], src[idx + G], src[idx + B], src[idx + A]];
     }
 }
 
@@ -150,7 +150,16 @@ function createFalseImage( trueSrc, IRSrc, dest, w, h, trueSrcShiftX, trueSrcShi
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
-            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueSrcShiftX, trueSrcShiftY );
+            
+            var trueVal = [0, 0, 0, 0];
+            
+            if ( trueSrcShiftX == 0 && trueSrcShiftY == 0 ) {
+                trueVal[R] = trueSrc[idx + R];
+                trueVal[G] = trueSrc[idx + G];
+                trueVal[B] = trueSrc[idx + B];
+            } else {
+                trueVal = getShiftedValue( trueSrc, w, h, x, y, trueSrcShiftX, trueSrcShiftY );
+            }
             
             dest[idx + R] = IRSrc[idx + R];
             dest[idx + G] = trueVal[R];
@@ -165,7 +174,16 @@ function createNaturalImage( trueSrc, IRSrc, dest, w, h, trueSrcShiftX, trueSrcS
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
-            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueSrcShiftX, trueSrcShiftY );
+            
+            var trueVal = [0, 0, 0, 0];
+            
+            if ( trueSrcShiftX == 0 && trueSrcShiftY == 0 ) {
+                trueVal[R] = trueSrc[idx + R];
+                trueVal[G] = trueSrc[idx + G];
+                trueVal[B] = trueSrc[idx + B];
+            } else {
+                trueVal = getShiftedValue( trueSrc, w, h, x, y, trueSrcShiftX, trueSrcShiftY );
+            }
             
             dest[idx + R] = trueVal[R];
             dest[idx + G] = IRSrc[idx + R];
@@ -180,7 +198,16 @@ function createNDVIImage( trueSrc, IRSrc, dest, w, h, trueSrcShiftX, trueSrcShif
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
-            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueSrcShiftX, trueSrcShiftY );
+
+            var trueVal = [0, 0, 0, 0];
+            
+            if ( trueSrcShiftX == 0 && trueSrcShiftY == 0 ) {
+                trueVal[R] = trueSrc[idx + R];
+                trueVal[G] = trueSrc[idx + G];
+                trueVal[B] = trueSrc[idx + B];
+            } else {
+                trueVal = getShiftedValue( trueSrc, w, h, x, y, trueSrcShiftX, trueSrcShiftY );
+            }
             
             var val = ( ( IRSrc[idx + R] - trueVal[R] ) / ( IRSrc[idx + R] + trueVal[R] ) + 1 ) / 2 * PMAX;
             
