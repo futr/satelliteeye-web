@@ -10,6 +10,8 @@ var IRImgData = null;
 var trueImgData = null;
 var imgW = 0;
 var imgH = 0;
+var trueShiftX = 0;
+var trueShiftY = 0;
 
 // 基底
 var ImgWorkerMessage = {
@@ -43,6 +45,12 @@ function imageWorkerOnMessage( e ) {
     case "DoProcess":
         processImage();
         break;
+    case "SetTrueShiftX":
+        trueShiftX = e.data.shiftX;
+        break;
+    case "SetTrueShiftY":
+        trueShiftY = e.data.shiftY;
+        break;
     }
 }
 
@@ -62,9 +70,9 @@ function processImage() {
     normalizeColor( IRImgData.data, normIRImgData.data, w, h );
     
     // Process
-    createFalseImage( normTrueImgData.data, normIRImgData.data, falseImgData.data, w, h );
-    createNaturalImage( normTrueImgData.data, normIRImgData.data, naturalImgData.data, w, h );
-    createNDVIImage( trueImgData.data, IRImgData.data, NDVIImgData.data, w, h );
+    createFalseImage( normTrueImgData.data, normIRImgData.data, falseImgData.data, w, h, trueShiftX, trueShiftY );
+    createNaturalImage( normTrueImgData.data, normIRImgData.data, naturalImgData.data, w, h, trueShiftX, trueShiftY );
+    createNDVIImage( trueImgData.data, IRImgData.data, NDVIImgData.data, w, h, trueShiftX, trueShiftY );
     
     // Post result
     postResultImgData( "outputFalse",   falseImgData );
@@ -125,41 +133,56 @@ function normalizeColor( src, dest, w, h ) {
     }
 }
 
-function createFalseImage( trueSrc, IRSrc, dest, w, h ) {    
+function getShiftedValue( src, w, h, x, y, srcShiftX, srcShiftY ) {
+    var cx = x - srcShiftX;
+    var cy = y - srcShiftY;
+    
+    if ( cx < 0 || cx >= w || cy < 0 || cy >= h ) {
+        return [0, 0, 0, 0];
+    } else {
+        var idx = ( cy * w + cx ) * 4;
+        return src.slice( idx, idx + 3 );
+    }
+}
+
+function createFalseImage( trueSrc, IRSrc, dest, w, h, trueSrcShiftX, trueSrcShiftY ) {    
     // Create false image
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
+            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueShiftX, trueShiftY );
             
             dest[idx + R] = IRSrc[idx + R];
-            dest[idx + G] = trueSrc[idx + R];
-            dest[idx + B] = trueSrc[idx + G];
+            dest[idx + G] = trueVal[R];
+            dest[idx + B] = trueVal[G];
             dest[idx + A] = PMAX;
         }
     }
 }
 
-function createNaturalImage( trueSrc, IRSrc, dest, w, h ) {    
+function createNaturalImage( trueSrc, IRSrc, dest, w, h, trueSrcShiftX, trueSrcShiftY ) {    
     // Create Natural image
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
+            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueShiftX, trueShiftY );
             
-            dest[idx + R] = trueSrc[idx + R];
+            dest[idx + R] = trueVal[R];
             dest[idx + G] = IRSrc[idx + R];
-            dest[idx + B] = trueSrc[idx + G];
+            dest[idx + B] = trueVal[G];
             dest[idx + A] = PMAX;
         }
     }
 }
 
-function createNDVIImage( trueSrc, IRSrc, dest, w, h ) {    
+function createNDVIImage( trueSrc, IRSrc, dest, w, h, trueSrcShiftX, trueSrcShiftY ) {    
     // Create NDVI image
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
+            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueShiftX, trueShiftY );
             
-            var val = ( ( IRSrc[idx + R] - trueSrc[idx + R] ) / ( IRSrc[idx + R] + trueSrc[idx + R] ) + 1 ) / 2 * PMAX;
+            var val = ( ( IRSrc[idx + R] - trueVal[R] ) / ( IRSrc[idx + R] + trueVal[R] ) + 1 ) / 2 * PMAX;
             
             dest[idx + R] = val;
             dest[idx + G] = val;

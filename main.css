@@ -36,6 +36,27 @@ main {
     padding: 0px;
 }
 
+.sliderbox {
+	display: -webkit-flex;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	flex-direction: row;
+    margin: 3px;
+    padding: 0px;
+}
+
+.sliderWrap {
+	display: -webkit-flex;
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: center;
+	flex-direction: row;
+    margin: 0px;
+    padding: 3px;
+}
+
+
 .buttonWrap {
     margin: 2px;
 }
@@ -115,7 +136,7 @@ figcaption {
 	max-width: 100%;
 }
 
-/* 印刷時に飾りを取り除いて、２段組にする */
+/* 印刷時 */
 @media print {	
 	@page {
 		size: A4 landscape;
@@ -151,6 +172,10 @@ figcaption {
 	.buttonbox {
 		display: none;
 	}
+    
+    .sliderbox {
+        display: none;
+    }
 
 	figcaption {
 		font-size: 10pt;

@@ -20,10 +20,12 @@
 // Worker実装に挑戦中
 // とにかくJSではブロックしたりはできないらしい(UIスレッドとくっついてるから？)
 // 昔の人はどうやって実装してたんだろうか
+// WorkerにしたせいでChromeでローカルで動かなくなっちゃった
 //
 
 const IMG_WIDTH = 1024;
 const PMAX = 255;
+const SLIDER_WIDTH = 200;
 
 var imgW = 0;
 var imgH = 0;
@@ -32,9 +34,9 @@ var IRImg = new Image();
 var falseImg = new Image();
 var NDVICanvas = document.createElement( "canvas" );
 var NDVIImgData = null;
-var trueImgData = null;
-var IRImgData = null;
 var imgWkr = null;
+var trueImgHandler = null;
+var IRImgHandler = null;
 
 // 基底
 var ImgWorkerMessage = {
@@ -86,6 +88,14 @@ function ImageHandler( img, name )
 {
     this.outputName = name;
     this.img = img;
+    this.imgData = null;
+    this.iw = 0;
+    this.ih = 0;
+    this.shiftX = 0;
+    this.shiftY = 0;
+    this.canvas = document.createElement( "canvas" );
+    this.ctx = this.canvas.getContext( "2d" );
+    this.completeHandler = null;
 }
 
 ImageHandler.prototype.handleEvent = function( event ) {
@@ -96,46 +106,97 @@ ImageHandler.prototype.handleEvent = function( event ) {
     var file = event.target.files;
     var reader = new FileReader();
  
-    if ( file[0] ) {
-        reader.readAsDataURL(file[0]);
+    if ( !file[0] ) {
+        return;
     }
 
-    reader.onload = function(){
+    reader.onload = function() {
         originImg.onload = function() {
             // Disable UIs
             setAllButtonEnable( false ); 
             showProcessSpinner( true );
             
+            // Clear
+            obj.shiftX = 0;
+            obj.shiftY = 0;
+            
             // Calc size
-            var iw = IMG_WIDTH;
-            var ih = originImg.height / originImg.width * IMG_WIDTH;
+            obj.iw = IMG_WIDTH;
+            obj.ih = originImg.height / originImg.width * IMG_WIDTH;
             
-            // Show img
-            var canvas = document.createElement( "canvas" );
-            canvas.width = iw;
-            canvas.height = ih;
-            var ctx = canvas.getContext( "2d" );
+            // Init canvas
+            obj.canvas.width = obj.iw;
+            obj.canvas.height = obj.ih;
             
-            ctx.drawImage( originImg, 0, 0, iw, ih );
-            var dataURL = canvas.toDataURL( 'image/jpeg', 0.7 );
+            // Create input image
+            obj.ctx.drawImage( originImg, 0, 0, obj.iw, obj.ih );
+            obj.imgData = obj.ctx.getImageData( 0, 0, obj.iw, obj.ih );
+            var dataURL = obj.canvas.toDataURL( 'image/jpeg', 0.7 );
+            obj.img.src = dataURL;
+            
+            // Draw image
             document.getElementById( obj.outputName ).src = dataURL;
             document.getElementById( obj.outputName + "A" ).href = dataURL;
             
-            obj.img.src = dataURL;
-            
             // Post input image to worker
-            var msg = Object.create( ImgWorkerMessage );
-            msg.type = "SetImg";
-            msg.imgData = ctx.getImageData( 0, 0, iw, ih );
-            msg.name = obj.outputName;
-            imgWkr.postMessage( msg );
+            obj.postCurrentImage.call( obj );
+            
+            // Call Complete handler
+            if ( obj.completeHandler ) {
+                obj.completeHandler();
+            }
             
             // Enable UIs
             setAllButtonEnable( true ); 
             showProcessSpinner( false );
         }
+        
         originImg.src = reader.result;
     }
+    
+    reader.readAsDataURL( file[0] );
+}
+
+ImageHandler.prototype.postCurrentImage = function() {
+    var msg = Object.create( ImgWorkerMessage );
+    msg.type = "SetImg";
+    msg.imgData = this.imgData;
+    msg.name = this.outputName;
+    imgWkr.postMessage( msg );
+}
+
+ImageHandler.prototype.drawImaegData = function( shiftX, shiftY ) {
+    this.ctx.clearRect( 0, 0, this.iw, this.ih );            
+    this.ctx.putImageData( this.imgData, shiftX, shiftY, 0, 0, this.iw, this.ih );
+    var dataURL = this.canvas.toDataURL( 'image/jpeg', 0.7 );
+    document.getElementById( this.outputName ).src = dataURL;
+    document.getElementById( this.outputName + "A" ).href = dataURL;
+}
+
+function sliderTrueXChanged( val ) {
+    trueImgHandler.shiftX = val - SLIDER_WIDTH / 2;
+    trueImgHandler.drawImaegData( trueImgHandler.shiftX, trueImgHandler.shiftY );
+    
+    var msg = Object.create( ImgWorkerMessage );
+    msg.type = "SetTrueShiftX";
+    msg.shiftX = trueImgHandler.shiftX;
+    imgWkr.postMessage( msg );
+}
+
+function sliderTrueYChanged( val ) {
+    trueImgHandler.shiftY = val - SLIDER_WIDTH / 2;
+    trueImgHandler.drawImaegData( trueImgHandler.shiftX, trueImgHandler.shiftY );
+    
+    var msg = Object.create( ImgWorkerMessage );
+    msg.type = "SetTrueShiftY";
+    msg.shiftY = trueImgHandler.shiftY;
+    imgWkr.postMessage( msg );
+}
+
+function trueImageLoaded()
+{
+    resetSlider();
+    setSliderEnable( true );
 }
 
 function mouseMoveOnNDVIImg( evt ) {
@@ -167,17 +228,21 @@ window.addEventListener( "DOMContentLoaded", function() {
     
     // Load a true image
     var selectTrue = document.getElementById( "selectTrue" );
-    var trueImgHandler = new ImageHandler( trueImg, "outputTrue" );
+    trueImgHandler = new ImageHandler( trueImg, "outputTrue" );
+    trueImgHandler.completeHandler = trueImageLoaded;
     selectTrue.addEventListener( "change", trueImgHandler, false );
     
     // Load a NIR Image
     var selectIR = document.getElementById( "selectIR" );
-    var IRImgHandler = new ImageHandler( IRImg, "outputIR" );
+    IRImgHandler = new ImageHandler( IRImg, "outputIR" );
     selectIR.addEventListener( "change", IRImgHandler, false );
     
     // Mouse event
     var NDVIImgElement = document.getElementById( "outputNDVI" );
     NDVIImgElement.addEventListener( "mousemove", mouseMoveOnNDVIImg );
+    
+    // Reset UI
+    setSliderEnable( false );
 });
 
 function processImage() {
@@ -200,6 +265,8 @@ function processImage() {
     
     // Disable buttons
     setAllButtonEnable( false ); 
+    // Disable slider
+    setSliderEnable( false );
     // Show progress
     showProcessSpinner( true );
     
@@ -227,8 +294,10 @@ function processCompleted() {
     
     // Enable buttons
     setAllButtonEnable( true ); 
+    // Enable slider
+    setSliderEnable( true );
     // Hide spinner
-    showProcessSpinner( false );
+    showProcessSpinner( false ); 
 }
 
 function postImageSize( w, h ) {
@@ -286,6 +355,30 @@ function showProcessSpinner( status ) {
         
         document.querySelectorAll( "#processSpinner" ).forEach( function( item ) {
             item.classList.remove( "is-active" );
+        } );
+    }
+}
+
+function resetSlider() {
+    var sx = document.getElementById( "trueSliderX" );
+    sx.min = 0;
+    sx.max = SLIDER_WIDTH;
+    sx.MaterialSlider.change( SLIDER_WIDTH / 2 );
+    
+    var sy = document.getElementById( "trueSliderY" );
+    sy.min = 0;
+    sy.max = SLIDER_WIDTH;
+    sy.MaterialSlider.change( SLIDER_WIDTH / 2 );
+}
+
+function setSliderEnable( status ) {
+    if ( status ) {
+        document.querySelectorAll( ".mdl-slider" ).forEach( function( item ) {
+            item.disabled = false;
+        } );
+    } else {
+        document.querySelectorAll( ".mdl-slider" ).forEach( function( item ) {
+            item.disabled = true;
         } );
     }
 }
