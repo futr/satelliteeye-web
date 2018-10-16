@@ -226,6 +226,10 @@ figcaption {
         
         max-width: initial;
 	}
+    
+    figure > img {
+        display: block;
+    }
 	
 	figure.result {
 		min-width: 0px;
