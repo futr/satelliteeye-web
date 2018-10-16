@@ -165,7 +165,7 @@ figcaption {
 	body {
 		padding: 0px;
 		margin: 0px;
-		font-size: 11pt;
+		font-size: 10pt;
 	}
 	
 	main {
@@ -202,7 +202,7 @@ figcaption {
     }
 
 	figcaption {
-		font-size: 10pt;
+		font-size: 9pt;
 	}
 	
 	.inputbox {
@@ -213,10 +213,6 @@ figcaption {
 		flex-wrap: nowrap;
         page-break-inside: avoid;
 	}
-
-    .allImages {
-        page-break-inside: avoid;
-    }
 
 	figure {
 		/* flexbox内で画像をページ境界で分解してしまうことがあるので、無効にしておく */
