@@ -211,8 +211,11 @@ figcaption {
 
 	.resultbox {
 		flex-wrap: nowrap;
-        page-break-inside: avoid;
 	}
+
+    .allImages {
+        page-break-inside: avoid;
+    }
 
 	figure {
 		/* flexbox内で画像をページ境界で分解してしまうことがあるので、無効にしておく */
@@ -224,9 +227,6 @@ figcaption {
 		border: 1px gray;
         
         max-width: initial;
-        
-        /* figure内部で改ページ禁止 */
-        page-break-inside: avoid;
 	}
   	
 	figure.result {
