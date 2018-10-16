@@ -212,6 +212,7 @@ figcaption {
 	.resultbox {
 		flex-wrap: nowrap;
         page-break-inside: avoid;
+        page-break-after: always;
 	}
 
 	figure {
