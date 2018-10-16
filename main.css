@@ -229,6 +229,10 @@ figcaption {
 	figure.result {
 		min-width: 0px;
 	}
+    
+    figure > img {
+        max-height: 800px;
+    }
 }
 
 
