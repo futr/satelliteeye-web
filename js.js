@@ -194,7 +194,7 @@ function postShiftTrue()
     msg.shiftX = trueImgHandler.shiftX;
     imgWkr.postMessage( msg );
     msg.type = "SetTrueShiftY";
-    msg.shiftX = trueImgHandler.shiftY;
+    msg.shiftY = trueImgHandler.shiftY;
     imgWkr.postMessage( msg );
 }
 
