@@ -231,7 +231,7 @@ figcaption {
 	}
     
     figure > img {
-        max-height: 800px;
+        max-height: 600px;
     }
 }
 
