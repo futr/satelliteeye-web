@@ -165,7 +165,7 @@ figcaption {
 	body {
 		padding: 0px;
 		margin: 0px;
-		font-size: 12pt;
+		font-size: 11pt;
 	}
 	
 	main {
@@ -220,17 +220,16 @@ figcaption {
 		/* 今のところ、figureとaをblockに戻しておけば図が分解されることはない */
 		display: block;
 		
-		padding: 5px;
+		padding: 0px;
 		box-shadow: none;
 		border: 1px gray;
         
         max-width: initial;
+        
+        /* figure内部で改ページ禁止 */
+        break-inside: avoid-page;
 	}
-    
-    figure > img {
-        display: block;
-    }
-	
+  	
 	figure.result {
 		min-width: 0px;
 	}
