@@ -42,6 +42,20 @@ main {
 	font-size: 10px;margin: 3px;padding: 0px;
 }
 
+.copyrightbox {
+    display: flex;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+    
+    margin-top: 5px;
+}
+
+.copyright-str {
+    font-size: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 .spinnerWrap {
     display:none;  
 }
@@ -165,7 +179,7 @@ figcaption {
 	body {
 		padding: 0px;
 		margin: 0px;
-		font-size: 10pt;
+		font-size: 12pt;
 	}
 	
 	main {
@@ -202,7 +216,7 @@ figcaption {
     }
 
 	figcaption {
-		font-size: 9pt;
+		font-size: 12pt;
 	}
 	
 	.inputbox {
@@ -232,6 +246,10 @@ figcaption {
     
     figure > img {
         max-height: 300px;
+    }
+    
+    .copyrightbox {
+        display: none;
     }
 }
 
