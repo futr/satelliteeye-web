@@ -150,7 +150,7 @@ function createFalseImage( trueSrc, IRSrc, dest, w, h, trueSrcShiftX, trueSrcShi
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
-            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueShiftX, trueShiftY );
+            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueSrcShiftX, trueSrcShiftY );
             
             dest[idx + R] = IRSrc[idx + R];
             dest[idx + G] = trueVal[R];
@@ -165,7 +165,7 @@ function createNaturalImage( trueSrc, IRSrc, dest, w, h, trueSrcShiftX, trueSrcS
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
-            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueShiftX, trueShiftY );
+            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueSrcShiftX, trueSrcShiftY );
             
             dest[idx + R] = trueVal[R];
             dest[idx + G] = IRSrc[idx + R];
@@ -180,7 +180,7 @@ function createNDVIImage( trueSrc, IRSrc, dest, w, h, trueSrcShiftX, trueSrcShif
     for ( var y = 0; y < h; y++ ) {
         for ( var x = 0; x < w; x++ ) {
             var idx = ( y * w + x ) * 4;
-            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueShiftX, trueShiftY );
+            var trueVal = getShiftedValue( trueSrc, w, h, x, y, trueSrcShiftX, trueSrcShiftY );
             
             var val = ( ( IRSrc[idx + R] - trueVal[R] ) / ( IRSrc[idx + R] + trueVal[R] ) + 1 ) / 2 * PMAX;
             
