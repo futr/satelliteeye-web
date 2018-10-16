@@ -32,6 +32,8 @@ var IRImg = new Image();
 var falseImg = new Image();
 var NDVICanvas = document.createElement( "canvas" );
 var NDVIImgData = null;
+var trueImgData = null;
+var IRImgData = null;
 var imgWkr = null;
 
 // 基底
@@ -201,6 +203,9 @@ function processImage() {
     // Show progress
     showProcessSpinner( true );
     
+    // Clear result
+    clearAllResultImage();
+    
     // Post Image size
     postImageSize( w, h );
     
@@ -216,7 +221,6 @@ function postStartProcess() {
 
 function processCompleted() {
     // Create result canvas
-    // NDVICanvas = document.createElement( "canvas" );
     NDVICanvas.width = imgW;
     NDVICanvas.height = imgH;
     NDVICanvas.getContext('2d').putImageData( NDVIImgData, 0, 0 ); 
@@ -255,16 +259,33 @@ function setAllButtonEnable( status ) {
     setButtonEnable( "processButton", status );
 }
 
+function clearAllResultImage()
+{
+    document.getElementById( "outputFalse" ).src = "";
+    document.getElementById( "outputNatural" ).src = "";
+    document.getElementById( "outputNDVI" ).src = "";
+}
+
 function setButtonEnable( buttonName, status ) {
     document.getElementById( buttonName ).disabled = !status;
 }
 
 function showProcessSpinner( status ) {
     if ( status ) {
-        document.getElementById( "processSpinner" ).classList.add( "is-active" );
-        document.getElementById( "spinnerWrap" ).style = "display: block";
+        document.querySelectorAll( "#spinnerWrap" ).forEach( function( item ) {
+            item.style = "display: block";
+        } );
+        
+        document.querySelectorAll( "#processSpinner" ).forEach( function( item ) {
+            item.classList.add( "is-active" );
+        } );
     } else {
-        document.getElementById( "processSpinner" ).classList.remove( "is-active" );
-        document.getElementById( "spinnerWrap" ).style = "display: none";
+        document.querySelectorAll( "#spinnerWrap" ).forEach( function( item ) {
+            item.style = "display: none";
+        } );
+        
+        document.querySelectorAll( "#processSpinner" ).forEach( function( item ) {
+            item.classList.remove( "is-active" );
+        } );
     }
 }
