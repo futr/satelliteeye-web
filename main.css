@@ -206,19 +206,18 @@ figcaption {
 	}
 	
 	.inputbox {
-		/* firefoxでdivを分解しきらないみたい(画像がはみ出る)なのでblockにする */
 		flex-wrap: nowrap;
 	}
 
 	.resultbox {
-		/* firefoxでdivを分解しきらないみたい(画像がはみ出る)なのでblockにする */
 		flex-wrap: nowrap;
+        page-break-inside: avoid;
 	}
 
 	figure {
 		/* flexbox内で画像をページ境界で分解してしまうことがあるので、無効にしておく */
 		/* 今のところ、figureとaをblockに戻しておけば図が分解されることはない */
-		/* display: block; */
+		display: block;
 		
 		padding: 0px;
 		box-shadow: none;
