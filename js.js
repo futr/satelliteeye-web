@@ -177,24 +177,30 @@ function sliderTrueXChanged( val ) {
     trueImgHandler.shiftX = val - SLIDER_WIDTH / 2;
     trueImgHandler.drawImaegData( trueImgHandler.shiftX, trueImgHandler.shiftY );
     
-    var msg = Object.create( ImgWorkerMessage );
-    msg.type = "SetTrueShiftX";
-    msg.shiftX = trueImgHandler.shiftX;
-    imgWkr.postMessage( msg );
+    postShiftTrue();
 }
 
 function sliderTrueYChanged( val ) {
     trueImgHandler.shiftY = val - SLIDER_WIDTH / 2;
     trueImgHandler.drawImaegData( trueImgHandler.shiftX, trueImgHandler.shiftY );
     
+    postShiftTrue();
+}
+
+function postShiftTrue()
+{
     var msg = Object.create( ImgWorkerMessage );
+    msg.type = "SetTrueShiftX";
+    msg.shiftX = trueImgHandler.shiftX;
+    imgWkr.postMessage( msg );
     msg.type = "SetTrueShiftY";
-    msg.shiftY = trueImgHandler.shiftY;
+    msg.shiftX = trueImgHandler.shiftY;
     imgWkr.postMessage( msg );
 }
 
 function trueImageLoaded()
 {
+    postShiftTrue();
     resetSlider();
     setSliderEnable( true );
 }
