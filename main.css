@@ -227,7 +227,7 @@ figcaption {
         max-width: initial;
         
         /* figure内部で改ページ禁止 */
-        break-inside: avoid-page;
+        page-break-inside: avoid;
 	}
   	
 	figure.result {
