@@ -18,6 +18,26 @@ main {
     display: none;
 }
 
+.channelSelector {
+    margin-left: 0.4em;
+}
+
+.channelSelector.R {
+    color: red;
+}
+
+.channelSelector.G {
+    color: green;
+}
+
+.channelSelector.B {
+    color: blue;
+}
+
+.channelSelector.All {
+    color: black;
+}
+
 .warnText {
 	font-size: 10px;margin: 3px;padding: 0px;
 }
@@ -174,6 +194,10 @@ figcaption {
 	}
     
     .sliderbox {
+        display: none;
+    }
+    
+    .channelSelector {
         display: none;
     }
 

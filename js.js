@@ -23,9 +23,14 @@
 // WorkerにしたせいでChromeでローカルで動かなくなっちゃった
 //
 
-const IMG_WIDTH = 1024;
-const PMAX = 255;
 const SLIDER_WIDTH = 200;
+
+const IMG_WIDTH = 1024;
+const R = 0;
+const G = 1;
+const B = 2;
+const A = 3;
+const PMAX = 255;
 
 var imgW = 0;
 var imgH = 0;
@@ -165,9 +170,32 @@ ImageHandler.prototype.postCurrentImage = function() {
     imgWkr.postMessage( msg );
 }
 
-ImageHandler.prototype.drawImaegData = function( shiftX, shiftY ) {
+ImageHandler.prototype.drawImaegData = function() {
     this.ctx.clearRect( 0, 0, this.iw, this.ih );            
-    this.ctx.putImageData( this.imgData, shiftX, shiftY, 0, 0, this.iw, this.ih );
+    this.ctx.putImageData( this.imgData, this.shiftX, this.shiftY, 0, 0, this.iw, this.ih );
+    var dataURL = this.canvas.toDataURL( 'image/jpeg', 0.7 );
+    document.getElementById( this.outputName ).src = dataURL;
+    document.getElementById( this.outputName + "A" ).href = dataURL;
+}
+
+ImageHandler.prototype.drawChannelImaegData = function( channel ) {
+    if ( !this.imgData ) {
+        return;
+    }
+    
+    this.ctx.clearRect( 0, 0, this.iw, this.ih );
+    
+    var channelData = new ImageData( this.iw, this.ih );
+    
+    for ( var y = 0; y < this.ih; y++ ) {
+        for ( var x = 0; x < this.iw; x++ ) {
+            var idx = ( y * this.iw + x ) * 4;
+            channelData.data[idx + A] = PMAX;            
+            channelData.data[idx + channel] = this.imgData.data[idx + channel]; 
+        }
+    }
+    
+    this.ctx.putImageData( channelData, this.shiftX, this.shiftY, 0, 0, this.iw, this.ih );
     var dataURL = this.canvas.toDataURL( 'image/jpeg', 0.7 );
     document.getElementById( this.outputName ).src = dataURL;
     document.getElementById( this.outputName + "A" ).href = dataURL;
@@ -175,14 +203,14 @@ ImageHandler.prototype.drawImaegData = function( shiftX, shiftY ) {
 
 function sliderTrueXChanged( val ) {
     trueImgHandler.shiftX = val - SLIDER_WIDTH / 2;
-    trueImgHandler.drawImaegData( trueImgHandler.shiftX, trueImgHandler.shiftY );
+    trueImgHandler.drawImaegData();
     
     postShiftTrue();
 }
 
 function sliderTrueYChanged( val ) {
     trueImgHandler.shiftY = val - SLIDER_WIDTH / 2;
-    trueImgHandler.drawImaegData( trueImgHandler.shiftX, trueImgHandler.shiftY );
+    trueImgHandler.drawImaegData();
     
     postShiftTrue();
 }
@@ -386,5 +414,37 @@ function setSliderEnable( status ) {
         document.querySelectorAll( ".mdl-slider" ).forEach( function( item ) {
             item.disabled = true;
         } );
+    }
+}
+
+// 色を変える
+function onChannelSelect( event ) {
+    var a = event.target;
+    
+    switch ( a.id ) {
+    case "trueRSelector":
+        trueImgHandler.drawChannelImaegData( R );
+        break;
+    case "trueGSelector":
+        trueImgHandler.drawChannelImaegData( G );
+        break;
+    case "trueBSelector":
+        trueImgHandler.drawChannelImaegData( B );
+        break;
+    case "trueAllSelector":
+        trueImgHandler.drawImaegData();
+        break;
+    case "IRRSelector":
+        IRImgHandler.drawChannelImaegData( R );
+        break;
+    case "IRGSelector":
+        IRImgHandler.drawChannelImaegData( G );
+        break;
+    case "IRBSelector":
+        IRImgHandler.drawChannelImaegData( B );
+        break;
+    case "IRAllSelector":
+        IRImgHandler.drawImaegData();
+        break;
     }
 }
