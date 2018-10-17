@@ -43,6 +43,9 @@ var imgWkr = null;
 var trueImgHandler = null;
 var IRImgHandler = null;
 
+// ChromeでローカルファイルのWorkerを実行できない対策用
+var imageWorkerSource = 'function imageWorkerOnMessage(a){var t=a.data.type;switch(console.log(t),t){case"SetSize":imgW=a.data.w,imgH=a.data.h;break;case"SetImg":switch(a.data.name){case"outputTrue":trueImgData=a.data.imgData;break;case"outputIR":IRImgData=a.data.imgData}break;case"DoProcess":processImage();break;case"SetTrueShiftX":trueShiftX=a.data.shiftX;break;case"SetTrueShiftY":trueShiftY=a.data.shiftY}}function processImage(){var a=imgW,t=imgH,e=new ImageData(a,t),r=new ImageData(a,t),o=new ImageData(a,t),g=new ImageData(a,t),s=new ImageData(a,t);normalizeColor(trueImgData.data,e.data,a,t),normalizeColor(IRImgData.data,r.data,a,t),createFalseImage(e.data,r.data,g.data,a,t,trueShiftX,trueShiftY),createNaturalImage(e.data,r.data,s.data,a,t,trueShiftX,trueShiftY),createNDVIImage(trueImgData.data,IRImgData.data,o.data,a,t,trueShiftX,trueShiftY),postResultImgData("outputFalse",g),postResultImgData("outputNatural",s),postResultImgData("outputNDVI",o),postComplete()}function postResultImgData(a,t){var e=Object.create(ImgWorkerMessage);e.type="SetResultImgData",e.imgData=t,e.name=a,postMessage(e)}function postComplete(){var a=Object.create(ImgWorkerMessage);a.type="CompleteProcess",postMessage(a)}function normalizeColor(a,t,e,r){for(var o=[PMAX,PMAX,PMAX],g=[0,0,0],s=0;r>s;s++)for(var u=0;e>u;u++){var m=4*(s*e+u),i=a[m+R],f=a[m+G],n=a[m+B];i>g[R]&&(g[R]=i),f>g[G]&&(g[G]=f),n>g[B]&&(g[B]=n),i<o[R]&&(o[R]=i),f<o[G]&&(o[G]=f),n<o[B]&&(o[B]=n)}for(var s=0;r>s;s++)for(var u=0;e>u;u++){var m=4*(s*e+u);t[m+R]=(a[m+R]-o[R])/(g[R]-o[R])*PMAX,t[m+G]=(a[m+G]-o[G])/(g[G]-o[G])*PMAX,t[m+B]=(a[m+B]-o[B])/(g[B]-o[B])*PMAX,t[m+A]=PMAX}}function getShiftedValue(a,t,e,r,o,g,s){var u=r-g,m=o-s;if(0>u||u>=t||0>m||m>=e)return[0,0,0,0];var i=4*(m*t+u);return[a[i+R],a[i+G],a[i+B],a[i+A]]}function createFalseImage(a,t,e,r,o,g,s){for(var u=0;o>u;u++)for(var m=0;r>m;m++){var i=4*(u*r+m),f=[0,0,0,0];0==g&&0==s?(f[R]=a[i+R],f[G]=a[i+G],f[B]=a[i+B]):f=getShiftedValue(a,r,o,m,u,g,s),e[i+R]=t[i+R],e[i+G]=f[R],e[i+B]=f[G],e[i+A]=PMAX}}function createNaturalImage(a,t,e,r,o,g,s){for(var u=0;o>u;u++)for(var m=0;r>m;m++){var i=4*(u*r+m),f=[0,0,0,0];0==g&&0==s?(f[R]=a[i+R],f[G]=a[i+G],f[B]=a[i+B]):f=getShiftedValue(a,r,o,m,u,g,s),e[i+R]=f[R],e[i+G]=t[i+R],e[i+B]=f[G],e[i+A]=PMAX}}function createNDVIImage(a,t,e,r,o,g,s){for(var u=0;o>u;u++)for(var m=0;r>m;m++){var i=4*(u*r+m),f=[0,0,0,0];0==g&&0==s?(f[R]=a[i+R],f[G]=a[i+G],f[B]=a[i+B]):f=getShiftedValue(a,r,o,m,u,g,s);var n=((t[i+R]-f[R])/(t[i+R]+f[R])+1)/2*PMAX;e[i+R]=n,e[i+G]=n,e[i+B]=n,e[i+A]=PMAX}}const R=0,G=1,B=2,A=3,PMAX=255;var IRImgData=null,trueImgData=null,imgW=0,imgH=0,trueShiftX=0,trueShiftY=0,ImgWorkerMessage={type:"NullMsg"};addEventListener("message",imageWorkerOnMessage,!1);';
+
 // 基底
 var ImgWorkerMessage = {
     type: "NullMsg"
@@ -52,11 +55,23 @@ if ( window.Worker ) {
     // Create worker
     try {
         imgWkr = new Worker( "./worker.js" );
+        console.log( "file worker" );
     } catch ( e ) {
-        console.log( "Failed to start worker" );
+        var blob = new Blob( [imageWorkerSource] );
+        var blobURL = URL.createObjectURL( blob );
+        
+        try {
+            imgWkr = new Worker( blobURL );
+            console.log( "blob worker" );
+        } catch ( e ) {
+            alert( "Workerを起動できませんでした" );
+            console.log( "Failed to start worker" );
+        }
     }
     
-    imgWkr.addEventListener( "message", messageReceived, false );
+    if ( imgWkr ) {
+        imgWkr.addEventListener( "message", messageReceived, false );
+    }
 } else {
     alert( "Workerをサポートしていないブラウザでは動作しません" );
 }
