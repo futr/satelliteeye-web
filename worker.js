@@ -25,8 +25,6 @@ addEventListener( "message", imageWorkerOnMessage, false );
 function imageWorkerOnMessage( e ) {
     var msgType = e.data.type;
     
-    console.log( msgType );
-    
     switch ( msgType ) {
     case "SetSize":
         imgW = e.data.w;
