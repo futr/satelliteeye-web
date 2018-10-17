@@ -390,19 +390,19 @@ function setButtonEnable( buttonName, status ) {
 
 function showProcessSpinner( status ) {
     if ( status ) {
-        document.querySelectorAll( "#spinnerWrap" ).forEach( function( item ) {
+        document.querySelectorAll( ".spinnerWrap" ).forEach( function( item ) {
             item.style = "display: block";
         } );
         
-        document.querySelectorAll( "#processSpinner" ).forEach( function( item ) {
+        document.querySelectorAll( ".mdl-spinner" ).forEach( function( item ) {
             item.classList.add( "is-active" );
         } );
     } else {
-        document.querySelectorAll( "#spinnerWrap" ).forEach( function( item ) {
+        document.querySelectorAll( ".spinnerWrap" ).forEach( function( item ) {
             item.style = "display: none";
         } );
         
-        document.querySelectorAll( "#processSpinner" ).forEach( function( item ) {
+        document.querySelectorAll( ".mdl-spinner" ).forEach( function( item ) {
             item.classList.remove( "is-active" );
         } );
     }
