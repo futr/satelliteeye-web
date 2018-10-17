@@ -23,7 +23,7 @@
 // WorkerにしたせいでChromeでローカルで動かなくなっちゃった
 //
 
-const SLIDER_WIDTH = 200;
+const SLIDER_WIDTH = 300;
 
 const IMG_WIDTH = 1024;
 const R = 0;
