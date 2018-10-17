@@ -81,7 +81,7 @@ if ( window.Worker ) {
 function messageReceived( e ) {
     var msgType = e.data.type;
     
-    console.log( msgType );
+    // console.log( msgType );
     
     switch ( msgType ) {
     case "SetResultImgData":
@@ -226,15 +226,15 @@ ImageHandler.prototype.drawChannelImaegData = function( channel ) {
     document.getElementById( this.outputName + "A" ).href = dataURL;
 }
 
-function sliderTrueXChanged( val ) {
-    trueImgHandler.shiftX = val - SLIDER_WIDTH / 2;
+function sliderTrueXChanged( e ) {
+    trueImgHandler.shiftX = e.target.value - SLIDER_WIDTH / 2;
     trueImgHandler.drawImaegData();
     
     postShiftTrue();
 }
 
-function sliderTrueYChanged( val ) {
-    trueImgHandler.shiftY = val - SLIDER_WIDTH / 2;
+function sliderTrueYChanged( e ) {
+    trueImgHandler.shiftY = e.target.value - SLIDER_WIDTH / 2;
     trueImgHandler.drawImaegData();
     
     postShiftTrue();
@@ -303,7 +303,11 @@ window.addEventListener( "DOMContentLoaded", function() {
     
     // Mouse event
     var NDVIImgElement = document.getElementById( "outputNDVI" );
-    NDVIImgElement.addEventListener( "mousemove", mouseMoveOnNDVIImg );
+    NDVIImgElement.addEventListener( "mousemove", mouseMoveOnNDVIImg, false );
+    
+    // Slider event
+    document.getElementById( "trueSliderX" ).addEventListener( "input", sliderTrueXChanged, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "input", sliderTrueYChanged, false );
     
     // Reset UI
     setSliderEnable( false );
@@ -418,24 +422,20 @@ function resetSlider() {
     var sx = document.getElementById( "trueSliderX" );
     sx.min = 0;
     sx.max = SLIDER_WIDTH;
-    sx.MaterialSlider.change( SLIDER_WIDTH / 2 );
+    sx.value = SLIDER_WIDTH / 2;
     
     var sy = document.getElementById( "trueSliderY" );
     sy.min = 0;
     sy.max = SLIDER_WIDTH;
-    sy.MaterialSlider.change( SLIDER_WIDTH / 2 );
+    sy.value = SLIDER_WIDTH / 2;
 }
 
 function setSliderEnable( status ) {
-    if ( status ) {
-        document.querySelectorAll( ".mdl-slider" ).forEach( function( item ) {
-            item.disabled = false;
-        } );
-    } else {
-        document.querySelectorAll( ".mdl-slider" ).forEach( function( item ) {
-            item.disabled = true;
-        } );
-    }
+    var sx = document.getElementById( "trueSliderX" );
+    var sy = document.getElementById( "trueSliderY" );
+    
+    sx.disabled = !status;
+    sy.disabled = !status;
 }
 
 // 色を変える
