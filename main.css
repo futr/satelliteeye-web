@@ -56,6 +56,10 @@ main {
     margin-right: 5px;
 }
 
+.githubbtn {
+    font-size: 10px;
+}
+
 .spinnerWrap {
     display:none;  
 }
@@ -89,7 +93,6 @@ main {
     margin: 0px;
     padding: 3px;
 }
-
 
 .buttonWrap {
     margin: 2px;
