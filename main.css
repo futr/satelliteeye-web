@@ -197,6 +197,10 @@ figcaption {
     a[href]:after {
         content: "";
     }
+    
+    a {
+        text-decoration:none;
+    }
 
     .tooltipnspan {
         display: none;
