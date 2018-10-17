@@ -401,17 +401,9 @@ function showProcessSpinner( status ) {
         document.querySelectorAll( ".spinnerWrap" ).forEach( function( item ) {
             item.style = "display: block";
         } );
-        
-        document.querySelectorAll( ".mdl-spinner" ).forEach( function( item ) {
-            item.classList.add( "is-active" );
-        } );
     } else {
         document.querySelectorAll( ".spinnerWrap" ).forEach( function( item ) {
             item.style = "display: none";
-        } );
-        
-        document.querySelectorAll( ".mdl-spinner" ).forEach( function( item ) {
-            item.classList.remove( "is-active" );
         } );
     }
 }
