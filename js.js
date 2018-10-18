@@ -1,4 +1,3 @@
-// 初めて書いたJSなので多分むちゃくちゃです
 // 以下のサイトのコードを利用させていただきました
 // https://mementoo.info/
 // http://jsfiddle.net/z3JtC/4
@@ -7,21 +6,7 @@
 // https://weworkweplay.com/play/saving-html5-canvas-as-image/
 // https://codepen.io/noahblon/post/a-practical-guide-to-flexbox-understanding-space-between-the-unsung-hero
 // http://maeharin.hatenablog.com/entry/20130215/javascript_prototype_chain
-// あとモジラのチュートリアルを見つつ、むりくり書きました
 // https://developer.mozilla.org/ja/docs/Web/Guide/HTML/Canvas_tutorial/Basic_usage
-//
-// 画像が大きい場合遅すぎるのでなんとかしたい
-// 多分URL変換が重い?
-//
-// オブジェクト？は参照渡しが基本と考えるが、
-// 例えば
-// parent.img = new Image();
-// をすると、引数として渡したグローバルなポインタを書きかえて欲しいが、実際は参照が書き換わるだけ。newは参照の書き換え？
-//
-// Worker実装に挑戦中
-// とにかくJSではブロックしたりはできないらしい(UIスレッドとくっついてるから？)
-// 昔の人はどうやって実装してたんだろうか
-// WorkerにしたせいでChromeでローカルで動かなくなっちゃった
 //
 
 const SLIDER_WIDTH = 300;
