@@ -17,7 +17,7 @@ main {
 }
 
 .channelSelector {
-    margin-left: 0.4em;
+    margin-left: 0.25em;
 }
 
 .channelSelector.R {
@@ -102,6 +102,8 @@ main {
 .easybtn {
     font-size: 11.5pt;
     margin: 0px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .easybtn.doprocess {
@@ -209,6 +211,10 @@ figcaption {
 	
 	/* IE11でflexboxで画像キャプションを縮めるために必要 */
 	max-width: 100%;
+}
+
+figcaption > .imglinkcs {
+    margin-right: 4px;
 }
 
 /* 印刷時 */
