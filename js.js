@@ -194,6 +194,10 @@ ImageHandler.prototype.postCurrentImage = function() {
 }
 
 ImageHandler.prototype.drawImaegData = function() {
+    if ( !this.imgData ) {
+        return;
+    } 
+    
     this.ctx.clearRect( 0, 0, this.iw, this.ih );            
     this.ctx.putImageData( this.imgData, this.shiftX, this.shiftY, 0, 0, this.iw, this.ih );
     var dataURL = this.canvas.toDataURL( 'image/jpeg', 0.7 );
