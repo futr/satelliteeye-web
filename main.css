@@ -242,7 +242,7 @@ figcaption {
         text-decoration:none;
     }
 
-    .easytooltip {
+    .ettext {
         display: none;
     }
 
@@ -291,7 +291,8 @@ figcaption {
 		min-width: 0px;
 	}
     
-    figure > img {
+    figure img {
+        display: inline;
         max-height: 300px;
     }
     
