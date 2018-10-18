@@ -316,15 +316,23 @@ window.addEventListener( "DOMContentLoaded", function() {
     naturalImgHandler = new ImageHandler( "outputNatural" );
     NDVIImgHandler = new ImageHandler( "outputNDVI" );
     
+    // Register event handlers
+    // Button events
+    document.getElementById( "selectTrueButton" ).addEventListener( "click", function () { document.getElementById( 'selectTrue' ).click(); }, false );
+    document.getElementById( "selectIRButton" ).addEventListener( "click", function () { document.getElementById( 'selectIR' ).click(); }, false );
+    document.getElementById( "processButton" ).addEventListener( "click", function () { processImage(); }, false );
+    
     // Mouse event
-    var NDVIImgElement = document.getElementById( "outputNDVI" );
-    NDVIImgElement.addEventListener( "mousemove", mouseMoveOnNDVIImg, false );
+    document.getElementById( "outputNDVI" ).addEventListener( "mousemove", mouseMoveOnNDVIImg, false );
     
     // Slider event
     document.getElementById( "trueSliderX" ).addEventListener( "change", sliderTrueChanged, false );
     document.getElementById( "trueSliderY" ).addEventListener( "change", sliderTrueChanged, false );
     document.getElementById( "trueSliderX" ).addEventListener( "input", sliderTrueInputed, false );
     document.getElementById( "trueSliderY" ).addEventListener( "input", sliderTrueInputed, false );
+    
+    // Channel selector event
+    document.querySelectorAll( ".channelSelector" ).forEach( function( item ) { item.addEventListener( "click", function( e ) { onChannelSelect( e ); e.preventDefault(); }, false ); } );
     
     // Reset UI
     setSliderEnable( false );

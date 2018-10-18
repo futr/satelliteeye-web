@@ -20,9 +20,9 @@
 <div class="buttonbox">
 <input type="file" class="inputButton" id="selectTrue" accept="image/*,application/pdf">
 <input type="file" class="inputButton" id="selectIR" accept="image/*,application/pdf">
-<div class="buttonWrap"><button id="selectTrueButton" class="easybtn" onclick="document.getElementById( 'selectTrue' ).click();">可視光画像を選択</button></div>
-<div class="buttonWrap"><button id="selectIRButton" class="easybtn" onclick="document.getElementById( 'selectIR' ).click();">近赤外画像を選択</button></div>
-<div class="buttonWrap"><button id="processButton" class="easybtn doprocess" onclick="processImage();">計算</button></div>
+<div class="buttonWrap"><button id="selectTrueButton" class="easybtn">可視光画像を選択</button></div>
+<div class="buttonWrap"><button id="selectIRButton" class="easybtn">近赤外画像を選択</button></div>
+<div class="buttonWrap"><button id="processButton" class="easybtn doprocess">計算</button></div>
 </div>
 
 <div class="sliderbox">
@@ -36,20 +36,20 @@
 <img id="outputTrue">
 <figcaption>
 <a id="outputTrueA" download="true.jpeg">可視光画像</a>
-<a id="trueBSelector" class="channelSelector B" href="#" onclick="onChannelSelect(event);return false;">B</a>
-<a id="trueGSelector" class="channelSelector G" href="#" onclick="onChannelSelect(event);return false;">G</a>
-<a id="trueRSelector" class="channelSelector R" href="#" onclick="onChannelSelect(event);return false;">R</a>
-<a id="trueAllSelector" class="channelSelector All" href="#" onclick="onChannelSelect(event);return false;">全</a>
+<a id="trueBSelector" class="channelSelector B" href="#">B</a>
+<a id="trueGSelector" class="channelSelector G" href="#">G</a>
+<a id="trueRSelector" class="channelSelector R" href="#">R</a>
+<a id="trueAllSelector" class="channelSelector All" href="#">全</a>
 </figcaption>
 </figure>
 <figure>
 <img id="outputIR">
 <figcaption>
 <a id="outputIRA" download="ir.jpeg">赤外画像</a>
-<a id="IRBSelector" class="channelSelector B" href="#" onclick="onChannelSelect(event);return false;">B</a>
-<a id="IRGSelector" class="channelSelector G" href="#" onclick="onChannelSelect(event);return false;">G</a>
-<a id="IRRSelector" class="channelSelector R" href="#" onclick="onChannelSelect(event);return false;">R</a>
-<a id="IRAllSelector" class="channelSelector All" href="#" onclick="onChannelSelect(event);return false;">全</a>
+<a id="IRBSelector" class="channelSelector B" href="#">B</a>
+<a id="IRGSelector" class="channelSelector G" href="#">G</a>
+<a id="IRRSelector" class="channelSelector R" href="#">R</a>
+<a id="IRAllSelector" class="channelSelector All" href="#">全</a>
 </figcaption>
 </figure>
 </div>
@@ -60,10 +60,10 @@
 <img id="outputFalse">
 <figcaption>
 <a id="outputFalseA" download="false.jpeg">フォルスカラー</a>
-<a id="falseBSelector" class="channelSelector B" href="#" onclick="onChannelSelect(event);return false;">B</a>
-<a id="falseGSelector" class="channelSelector G" href="#" onclick="onChannelSelect(event);return false;">G</a>
-<a id="falseRSelector" class="channelSelector R" href="#" onclick="onChannelSelect(event);return false;">R</a>
-<a id="falseAllSelector" class="channelSelector All" href="#" onclick="onChannelSelect(event);return false;">全</a>
+<a id="falseBSelector" class="channelSelector B" href="#">B</a>
+<a id="falseGSelector" class="channelSelector G" href="#">G</a>
+<a id="falseRSelector" class="channelSelector R" href="#">R</a>
+<a id="falseAllSelector" class="channelSelector All" href="#">全</a>
 </figcaption>
 </figure>
 <figure class="result">
@@ -71,10 +71,10 @@
 <img id="outputNatural">
 <figcaption>
 <a id="outputNaturalA" download="natural.jpeg">ナチュラルカラー</a>
-<a id="naturalBSelector" class="channelSelector B" href="#" onclick="onChannelSelect(event);return false;">B</a>
-<a id="naturalGSelector" class="channelSelector G" href="#" onclick="onChannelSelect(event);return false;">G</a>
-<a id="naturalRSelector" class="channelSelector R" href="#" onclick="onChannelSelect(event);return false;">R</a>
-<a id="naturalAllSelector" class="channelSelector All" href="#" onclick="onChannelSelect(event);return false;">全</a>
+<a id="naturalBSelector" class="channelSelector B" href="#">B</a>
+<a id="naturalGSelector" class="channelSelector G" href="#">G</a>
+<a id="naturalRSelector" class="channelSelector R" href="#">R</a>
+<a id="naturalAllSelector" class="channelSelector All" href="#">全</a>
 </figcaption>
 </figure>
 <figure class="result">
