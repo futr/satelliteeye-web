@@ -1,6 +1,7 @@
 .easybtn {
     display: block;
     user-select: none;
+    -webkit-user-select: none;
     outline: 0;
 
     font-size: 12pt;
