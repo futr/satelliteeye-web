@@ -217,6 +217,15 @@ ImageHandler.prototype.drawChannelImaegData = function( channel ) {
     document.getElementById( this.outputName + "A" ).href = dataURL;
 }
 
+function disableSliderTempCanvas() {
+    // Show image
+    var img = document.getElementById( "outputTrue" );
+    img.style.visibility = "visible";
+    
+    // Remove temp canvas
+    document.getElementById( "outputTrueCanvas" ).style.display = "none";
+}
+
 function sliderTrueChanged( e ) {
     var sx = document.getElementById( "trueSliderX" ).value;
     var sy = document.getElementById( "trueSliderY" ).value;
@@ -225,18 +234,16 @@ function sliderTrueChanged( e ) {
     trueImgHandler.shiftY = sy - SLIDER_WIDTH / 2;
     trueImgHandler.drawImaegData();
     
+    // Hide temp canvas, show image
+    disableSliderTempCanvas();
+    
     // Post shiting value to worker
     postShiftTrue();
     
     // スライダーを離すと描画開始
     if ( trueImgHandler.img.src && IRImgHandler.img.src ) {
         processImage();
-    } else {
-        document.getElementById( "outputTrueCanvas" ).style.display = "none";
     }
-    
-    // ここで消すとちらつくので画像処理完了後に消している
-    // document.getElementById( "outputTrueCanvas" ).style.display = "none";
 }
 
 function sliderTrueInputed( e ) {
@@ -244,10 +251,16 @@ function sliderTrueInputed( e ) {
     var sy = document.getElementById( "trueSliderY" ).value;
     var img = document.getElementById( "outputTrue" );
     var canvas = document.getElementById( "outputTrueCanvas" );
+    var ctx = canvas.getContext( "2d" );
+    
     canvas.width = img.offsetWidth;
     canvas.height = img.offsetHeight;
+    
+    // Enable temp canvas
     canvas.style.display = "block";
-    var ctx = canvas.getContext( "2d" );
+
+    // Hide image
+    img.style.visibility = "hidden";
     
     trueImgHandler.shiftX = sx - SLIDER_WIDTH / 2;
     trueImgHandler.shiftY = sy - SLIDER_WIDTH / 2;
@@ -330,6 +343,10 @@ window.addEventListener( "DOMContentLoaded", function() {
     document.getElementById( "trueSliderY" ).addEventListener( "change", sliderTrueChanged, false );
     document.getElementById( "trueSliderX" ).addEventListener( "input", sliderTrueInputed, false );
     document.getElementById( "trueSliderY" ).addEventListener( "input", sliderTrueInputed, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "mouseup", function( e ) { disableSliderTempCanvas(); }, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "mouseup", function( e ) { disableSliderTempCanvas(); }, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "touchend", function( e ) { disableSliderTempCanvas(); }, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "touchend", function( e ) { disableSliderTempCanvas(); }, false );
     
     // Channel selector event
     document.querySelectorAll( ".channelSelector" ).forEach( function( item ) { item.addEventListener( "click", function( e ) { onChannelSelect( e ); e.preventDefault(); }, false ); } );
@@ -389,10 +406,6 @@ function processCompleted() {
     NDVICanvas.width = imgW;
     NDVICanvas.height = imgH;
     NDVICanvas.getContext('2d').putImageData( NDVIImgHandler.imgData, 0, 0 ); 
-    
-    // 確実に入力画像上のキャンバスを非表示にする（キャンバスがあると画像保存できない）
-    // スライダを離した時に消すとちらつくので、ワーカーでの処理の間に確実に画像を更新させる
-    document.getElementById( "outputTrueCanvas" ).style.display = "none";
     
     // Enable buttons
     setAllButtonEnable( true ); 
