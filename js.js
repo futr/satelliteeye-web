@@ -193,13 +193,17 @@ ImageHandler.prototype.postCurrentImage = function() {
     imgWkr.postMessage( msg );
 }
 
-ImageHandler.prototype.drawImaegData = function() {
-    if ( !this.imgData ) {
-        return;
-    } 
+ImageHandler.prototype.drawImaegDataToOwnCanvas = function( dx, dy ) {
+    if ( !this.imgData ) return;
     
-    this.ctx.clearRect( 0, 0, this.iw, this.ih );            
-    this.ctx.putImageData( this.imgData, this.shiftX, this.shiftY, 0, 0, this.iw, this.ih );
+    this.ctx.fillRect( 0, 0, this.canvas.width, this.canvas.height );            
+    this.ctx.putImageData( this.imgData, dx, dy, 0, 0, this.iw, this.ih );
+}
+
+ImageHandler.prototype.drawImaegData = function() {
+    if ( !this.imgData ) return;
+    
+    this.drawImaegDataToOwnCanvas( this.shiftX, this.shiftY ); 
     var dataURL = this.canvas.toDataURL( 'image/jpeg', 0.7 );
     document.getElementById( this.outputName ).src = dataURL;
     document.getElementById( this.outputName + "A" ).href = dataURL;
@@ -228,18 +232,42 @@ ImageHandler.prototype.drawChannelImaegData = function( channel ) {
     document.getElementById( this.outputName + "A" ).href = dataURL;
 }
 
-function sliderTrueXChanged( e ) {
-    trueImgHandler.shiftX = e.target.value - SLIDER_WIDTH / 2;
+function sliderTrueChanged( e ) {
+    var sx = document.getElementById( "trueSliderX" ).value;
+    var sy = document.getElementById( "trueSliderY" ).value;
+    
+    trueImgHandler.shiftX = sx - SLIDER_WIDTH / 2;
+    trueImgHandler.shiftY = sy - SLIDER_WIDTH / 2;
     trueImgHandler.drawImaegData();
     
+    // Post shiting value to worker
     postShiftTrue();
+    
+    // スライダーを離すと描画開始
+    if ( trueImgHandler.img.src && IRImgHandler.img.src ) {
+        processImage();
+    } else {
+        document.getElementById( "outputTrueCanvas" ).style.display = "none";
+    }
+    
+    // ここで消すとちらつくので画像処理完了後に消している
+    // document.getElementById( "outputTrueCanvas" ).style.display = "none";
 }
 
-function sliderTrueYChanged( e ) {
-    trueImgHandler.shiftY = e.target.value - SLIDER_WIDTH / 2;
-    trueImgHandler.drawImaegData();
+function sliderTrueInputed( e ) {
+    var sx = document.getElementById( "trueSliderX" ).value;
+    var sy = document.getElementById( "trueSliderY" ).value;
+    var img = document.getElementById( "outputTrue" );
+    var canvas = document.getElementById( "outputTrueCanvas" );
+    canvas.width = img.offsetWidth;
+    canvas.height = img.offsetHeight;
+    canvas.style.display = "block";
+    var ctx = canvas.getContext( "2d" );
     
-    postShiftTrue();
+    trueImgHandler.shiftX = sx - SLIDER_WIDTH / 2;
+    trueImgHandler.shiftY = sy - SLIDER_WIDTH / 2;
+    trueImgHandler.drawImaegDataToOwnCanvas( trueImgHandler.shiftX, trueImgHandler.shiftY );
+    ctx.drawImage( trueImgHandler.canvas, 0, 0, trueImgHandler.iw, trueImgHandler.ih, 0, 0, canvas.width, canvas.height );
 }
 
 function postShiftTrue()
@@ -308,8 +336,10 @@ window.addEventListener( "DOMContentLoaded", function() {
     NDVIImgElement.addEventListener( "mousemove", mouseMoveOnNDVIImg, false );
     
     // Slider event
-    document.getElementById( "trueSliderX" ).addEventListener( "input", sliderTrueXChanged, false );
-    document.getElementById( "trueSliderY" ).addEventListener( "input", sliderTrueYChanged, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "change", sliderTrueChanged, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "change", sliderTrueChanged, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "input", sliderTrueInputed, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "input", sliderTrueInputed, false );
     
     // Reset UI
     setSliderEnable( false );
@@ -355,7 +385,7 @@ function processImage() {
     postStartProcess();
 }
 
-function postStartProcess() {
+function postStartProcess() {   // Private
     var msg = Object.create( ImgWorkerMessage );
     msg.type = "DoProcess";
     imgWkr.postMessage( msg );
@@ -366,6 +396,10 @@ function processCompleted() {
     NDVICanvas.width = imgW;
     NDVICanvas.height = imgH;
     NDVICanvas.getContext('2d').putImageData( NDVIImgHandler.imgData, 0, 0 ); 
+    
+    // 確実に入力画像上のキャンバスを非表示にする（キャンバスがあると画像保存できない）
+    // スライダを離した時に消すとちらつくので、ワーカーでの処理の間に確実に画像を更新させる
+    document.getElementById( "outputTrueCanvas" ).style.display = "none";
     
     // Enable buttons
     setAllButtonEnable( true ); 
