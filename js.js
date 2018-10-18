@@ -326,8 +326,8 @@ window.addEventListener( "DOMContentLoaded", function() {
     document.getElementById( "outputNDVI" ).addEventListener( "mousemove", mouseMoveOnNDVIImg, false );
     
     // Slider event
-    document.getElementById( "trueSliderX" ).addEventListener( "change", sliderTrueChanged, false );
-    document.getElementById( "trueSliderY" ).addEventListener( "change", sliderTrueChanged, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "mouseup", sliderTrueChanged, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "mouseup", sliderTrueChanged, false );
     document.getElementById( "trueSliderX" ).addEventListener( "input", sliderTrueInputed, false );
     document.getElementById( "trueSliderY" ).addEventListener( "input", sliderTrueInputed, false );
     
