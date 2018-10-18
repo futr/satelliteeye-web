@@ -1,5 +1,3 @@
-/* https://copypet.jp/417/ */
-
 body {
 	font-family: arial, sans-serif;
 	font-size: 12pt;
@@ -66,28 +64,28 @@ main {
 
 /* -- https://loading.io/css/ -- */
 .lds-dual-ring {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
 }
 .lds-dual-ring:after {
-  content: " ";
-  display: block;
-  width: 16px;
-  height: 16px;
-  margin: 1px;
-  border-radius: 50%;
-  border: 3px solid #1E90FF;
-  border-color: #1E90FF transparent #1E90FF transparent;
-  animation: lds-dual-ring 1s linear infinite;
+    content: " ";
+    display: block;
+    width: 16px;
+    height: 16px;
+    margin: 1px;
+    border-radius: 50%;
+    border: 3px solid #1E90FF;
+    border-color: #1E90FF transparent #1E90FF transparent;
+    animation: lds-dual-ring 0.7s linear infinite;
 }
 @keyframes lds-dual-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 /* -- https://loading.io/css/ -- */
 
