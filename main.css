@@ -79,7 +79,7 @@ main {
   border-radius: 50%;
   border: 3px solid #1E90FF;
   border-color: #1E90FF transparent #1E90FF transparent;
-  animation: lds-dual-ring 1.2s linear infinite;
+  animation: lds-dual-ring 1s linear infinite;
 }
 @keyframes lds-dual-ring {
   0% {
@@ -102,6 +102,7 @@ main {
 }
 
 .easybtn {
+    font-size: 11pt;
     margin: 0px;
 }
 
@@ -134,14 +135,6 @@ main {
 
 .buttonWrap {
     margin: 2px;
-}
-
-img {
-	max-width: 100%;
-	height: auto;
-
-	/* IE11でflexboxで画像を縮めるために必要 */
-	min-height: 0%;
 }
 
 .imgcanvas {
@@ -200,6 +193,15 @@ figure {
 
 figure.result {
     min-width: 300px;
+}
+
+figure img {
+    display: block; /* デフォルトがinlineなので、これを入れとかないとツールチップで囲むとき隙間ができてしまう(chrome) */
+	max-width: 100%;
+	height: auto;
+
+	/* IE11でflexboxで画像を縮めるために必要 */
+	min-height: 0%;
 }
 
 figcaption {
