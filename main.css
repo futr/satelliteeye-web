@@ -97,8 +97,16 @@ main {
 	flex-wrap: wrap;
 	justify-content: center;
 	flex-direction: row;
-    margin: 3px;
+    margin: 0px;
     padding: 0px;
+}
+
+.easybtn {
+    margin: 0px;
+}
+
+.easybtn.doprocess {
+    background-color: #FF377E;
 }
 
 .sliderbox {
@@ -196,6 +204,7 @@ figure.result {
 
 figcaption {
 	padding-top: 1px;
+    padding-bottom:1px;
 	text-align: center;
 	color: #505050;
 	
@@ -232,7 +241,7 @@ figcaption {
         text-decoration:none;
     }
 
-    .tooltipnspan {
+    .easytooltip {
         display: none;
     }
 

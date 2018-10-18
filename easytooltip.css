@@ -1,0 +1,40 @@
+.easytooltip {
+    display: inline-block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+
+.easytooltip:hover .ettext {
+    display: inline-block;
+}
+
+.ettext {
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: 12pt;
+    
+    padding: 8px;
+    border-radius: 7px;
+    
+    left: 50%;
+    transform: translateX( -50% );
+    -webkit-transform: translateX( -50% );
+    
+    display: none;
+    user-select: none;
+    -moz-user-select: none;
+    white-space: nowrap;
+    position: absolute;
+}
+
+.ettext.top {
+    bottom: 100%;
+    margin-bottom: 2px;
+}
+
+.ettext.bottom {
+    top: 100%;
+    margin-top: 2px;
+}

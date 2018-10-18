@@ -7,11 +7,9 @@
   <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
   <style type="text/css">code{white-space: pre;}</style>
   <script src="js.js"></script>
-    
-  <link rel="stylesheet" href="./mdl/material.min.css">
-  <script src="./mdl/material.min.js"></script>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   
+  <link rel="stylesheet" href="easybtn.css">
+  <link rel="stylesheet" href="easytooltip.css">
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
@@ -22,9 +20,9 @@
 <div class="buttonbox">
 <input type="file" class="inputButton" id="selectTrue" accept="image/*,application/pdf">
 <input type="file" class="inputButton" id="selectIR" accept="image/*,application/pdf">
-<div class="buttonWrap"><button id="selectTrueButton" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" onclick="document.getElementById( 'selectTrue' ).click();">可視光画像を選択</button></div>
-<div class="buttonWrap"><button id="selectIRButton" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" onclick="document.getElementById( 'selectIR' ).click();">近赤外画像を選択</button></div>
-<div class="buttonWrap"><button id="processButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="processImage();">計算</button></div>
+<div class="buttonWrap"><button id="selectTrueButton" class="easybtn" onclick="document.getElementById( 'selectTrue' ).click();">可視光画像を選択</button></div>
+<div class="buttonWrap"><button id="selectIRButton" class="easybtn" onclick="document.getElementById( 'selectIR' ).click();">近赤外画像を選択</button></div>
+<div class="buttonWrap"><button id="processButton" class="easybtn doprocess" onclick="processImage();">計算</button></div>
 </div>
 
 <div class="sliderbox">
@@ -80,10 +78,12 @@
 </figure>
 <figure class="result">
 <div id="spinnerWrapNDVI" class="spinnerWrap"><div class="lds-dual-ring"></div></div>
+<span class="easytooltip">
 <img id="outputNDVI">
+<span id="NDVIPixelValue" class="ettext top"></span>
+</span>
 <figcaption>
 <a id="outputNDVIA" download="NDVI.jpeg">NDVI</a>
-<span class="tooltipspan"><span id="NDVIPixelValue" class="mdl-tooltip mdl-tooltip--large mdl-tooltip--top" for="outputNDVI"></span></span>
 </figcaption>
 </figure>
 </div>
