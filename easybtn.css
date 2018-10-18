@@ -25,7 +25,12 @@
     cursor: pointer;
 }
 
-.easybtn:active {
+.easybtn:enabled:active {
     filter: brightness( 1.2 );
-    box-shadow: 0 1px 3px -1px #BBBBBB;
+    box-shadow: 0 1px 3px -1px #C2C2C2;
+}
+
+.easybtn:disabled {
+    background-color: #C2C2C2 !important;
+    box-shadow: 0 0 0 0;
 }
