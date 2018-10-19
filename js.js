@@ -218,12 +218,15 @@ ImageHandler.prototype.drawChannelImaegData = function( channel ) {
 }
 
 function disableSliderTempCanvas() {
-    // Show image
-    var img = document.getElementById( "outputTrue" );
-    img.style.visibility = "visible";
+    // Promiseを使ったりいろいろしたがうまくいかなかった
+    // 汚い方法だけど、Canvasの非表示を100ms後にすることでちらつきを抑えている
+    // 100の根拠 -> 最低でも10fpsくらいは出てるだろう
     
-    // Remove temp canvas
-    document.getElementById( "outputTrueCanvas" ).style.display = "none";
+    setTimeout( () => {
+        // Remove temp canvas
+        console.log( "Resolved" );
+        document.getElementById( "outputTrueCanvas" ).style.display = "none";
+    }, 100 );
 }
 
 function sliderTrueChanged( e ) {
@@ -232,6 +235,8 @@ function sliderTrueChanged( e ) {
     
     trueImgHandler.shiftX = sx - SLIDER_WIDTH / 2;
     trueImgHandler.shiftY = sy - SLIDER_WIDTH / 2;
+    
+    // Update image
     trueImgHandler.drawImaegData();
     
     // Hide temp canvas, show image
@@ -258,9 +263,6 @@ function sliderTrueInputed( e ) {
     
     // Enable temp canvas
     canvas.style.display = "block";
-
-    // Hide image
-    img.style.visibility = "hidden";
     
     trueImgHandler.shiftX = sx - SLIDER_WIDTH / 2;
     trueImgHandler.shiftY = sy - SLIDER_WIDTH / 2;
@@ -339,17 +341,18 @@ window.addEventListener( "DOMContentLoaded", function() {
     document.getElementById( "outputNDVI" ).addEventListener( "mousemove", mouseMoveOnNDVIImg, false );
     
     // Slider event
-    document.getElementById( "trueSliderX" ).addEventListener( "change", sliderTrueChanged, false );
-    document.getElementById( "trueSliderY" ).addEventListener( "change", sliderTrueChanged, false );
+    // changeは値が変化しないと呼ばれないので、ひとまずmouseupとtouchendて対処
+    //document.getElementById( "trueSliderX" ).addEventListener( "change", sliderTrueChanged, false );
+    //document.getElementById( "trueSliderY" ).addEventListener( "change", sliderTrueChanged, false );
     document.getElementById( "trueSliderX" ).addEventListener( "input", sliderTrueInputed, false );
     document.getElementById( "trueSliderY" ).addEventListener( "input", sliderTrueInputed, false );
-    document.getElementById( "trueSliderX" ).addEventListener( "mouseup", function( e ) { disableSliderTempCanvas(); }, false );
-    document.getElementById( "trueSliderY" ).addEventListener( "mouseup", function( e ) { disableSliderTempCanvas(); }, false );
-    document.getElementById( "trueSliderX" ).addEventListener( "touchend", function( e ) { disableSliderTempCanvas(); }, false );
-    document.getElementById( "trueSliderY" ).addEventListener( "touchend", function( e ) { disableSliderTempCanvas(); }, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "mouseup",  ( e ) => { sliderTrueChanged(); }, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "mouseup",  ( e ) => { sliderTrueChanged(); }, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "touchend", ( e ) => { sliderTrueChanged(); }, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "touchend", ( e ) => { sliderTrueChanged(); }, false );
     
     // Channel selector event
-    document.querySelectorAll( ".channelSelector" ).forEach( function( item ) { item.addEventListener( "click", function( e ) { onChannelSelect( e ); e.preventDefault(); }, false ); } );
+    document.querySelectorAll( ".channelSelector" ).forEach( function( item ) { item.addEventListener( "click", ( e ) => { onChannelSelect( e ); e.preventDefault(); }, false ); } );
     
     // Reset UI
     setSliderEnable( false );
