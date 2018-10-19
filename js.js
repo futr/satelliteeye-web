@@ -217,16 +217,29 @@ ImageHandler.prototype.drawChannelImaegData = function( channel ) {
     document.getElementById( this.outputName + "A" ).href = dataURL;
 }
 
+function trueImageLoaded()
+{
+    postShiftTrue();
+    resetSlider();
+    setSliderEnable( true );
+}
+
 function disableSliderTempCanvas() {
     // Promiseを使ったりいろいろしたがうまくいかなかった
     // 汚い方法だけど、Canvasの非表示を100ms後にすることでちらつきを抑えている
-    // 100の根拠 -> 最低でも10fpsくらいは出てるだろう
+    // 100の根拠 -> 最低でも10fpsくらいは出てるだろう  
+    if ( document.getElementById( "outputTrueCanvas" ).style.display == "none" ) {
+        return;
+    }
     
     setTimeout( () => {
         // Remove temp canvas
-        console.log( "Resolved" );
         document.getElementById( "outputTrueCanvas" ).style.display = "none";
     }, 100 );
+}
+
+function enableSlideTempCanvas() {
+    document.getElementById( "outputTrueCanvas" ).style.display = "block";
 }
 
 function sliderTrueChanged( e ) {
@@ -239,13 +252,10 @@ function sliderTrueChanged( e ) {
     // Update image
     trueImgHandler.drawImaegData();
     
-    // Hide temp canvas, show image
-    disableSliderTempCanvas();
-    
     // Post shiting value to worker
     postShiftTrue();
     
-    // スライダーを離すと描画開始
+    // スライダーの値が変化したら描画
     if ( trueImgHandler.img.src && IRImgHandler.img.src ) {
         processImage();
     }
@@ -258,11 +268,13 @@ function sliderTrueInputed( e ) {
     var canvas = document.getElementById( "outputTrueCanvas" );
     var ctx = canvas.getContext( "2d" );
     
+    // バッファ用キャンバスが表示されてなければ書かない
+    if ( canvas.style.display == "none" ) {
+        return;
+    }
+    
     canvas.width = img.offsetWidth;
     canvas.height = img.offsetHeight;
-    
-    // Enable temp canvas
-    canvas.style.display = "block";
     
     trueImgHandler.shiftX = sx - SLIDER_WIDTH / 2;
     trueImgHandler.shiftY = sy - SLIDER_WIDTH / 2;
@@ -281,13 +293,6 @@ function postShiftTrue()
     imgWkr.postMessage( msg );
 }
 
-function trueImageLoaded()
-{
-    postShiftTrue();
-    resetSlider();
-    setSliderEnable( true );
-}
-
 function mouseMoveOnNDVIImg( evt ) {
     // Mouse move event handler of NDVI Image
 	if ( !NDVICanvas ) return;
@@ -304,7 +309,7 @@ function mouseMoveOnNDVIImg( evt ) {
     document.getElementById( "NDVIPixelValue" ).innerHTML = "NDVI値 : " + ( px.data[0] / PMAX * 2 - 1 ).toFixed( 3 );
 }
 
-window.addEventListener( "DOMContentLoaded", function() {
+window.addEventListener( "DOMContentLoaded", () => {
     // Check IE
     var ua = window.navigator.userAgent.toLowerCase();
 
@@ -333,23 +338,27 @@ window.addEventListener( "DOMContentLoaded", function() {
     
     // Register event handlers
     // Button events
-    document.getElementById( "selectTrueButton" ).addEventListener( "click", function () { document.getElementById( 'selectTrue' ).click(); }, false );
-    document.getElementById( "selectIRButton" ).addEventListener( "click", function () { document.getElementById( 'selectIR' ).click(); }, false );
-    document.getElementById( "processButton" ).addEventListener( "click", function () { processImage(); }, false );
+    document.getElementById( "selectTrueButton" ).addEventListener( "click", () => { document.getElementById( 'selectTrue' ).click(); }, false );
+    document.getElementById( "selectIRButton" ).addEventListener( "click",   () => { document.getElementById( 'selectIR' ).click(); }, false );
+    document.getElementById( "processButton" ).addEventListener( "click",    () => { processImage(); }, false );
     
     // Mouse event
     document.getElementById( "outputNDVI" ).addEventListener( "mousemove", mouseMoveOnNDVIImg, false );
     
     // Slider event
     // changeは値が変化しないと呼ばれないので、ひとまずmouseupとtouchendて対処
-    //document.getElementById( "trueSliderX" ).addEventListener( "change", sliderTrueChanged, false );
-    //document.getElementById( "trueSliderY" ).addEventListener( "change", sliderTrueChanged, false );
-    document.getElementById( "trueSliderX" ).addEventListener( "input", sliderTrueInputed, false );
-    document.getElementById( "trueSliderY" ).addEventListener( "input", sliderTrueInputed, false );
-    document.getElementById( "trueSliderX" ).addEventListener( "mouseup",  ( e ) => { sliderTrueChanged(); }, false );
-    document.getElementById( "trueSliderY" ).addEventListener( "mouseup",  ( e ) => { sliderTrueChanged(); }, false );
-    document.getElementById( "trueSliderX" ).addEventListener( "touchend", ( e ) => { sliderTrueChanged(); }, false );
-    document.getElementById( "trueSliderY" ).addEventListener( "touchend", ( e ) => { sliderTrueChanged(); }, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "change", sliderTrueChanged, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "change", sliderTrueChanged, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "input",  sliderTrueInputed, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "input",  sliderTrueInputed, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "mousedown",  () => { enableSlideTempCanvas(); }, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "mousedown",  () => { enableSlideTempCanvas(); }, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "touchstart", () => { enableSlideTempCanvas(); }, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "touchstart", () => { enableSlideTempCanvas(); }, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "mouseup",  () => { disableSliderTempCanvas(); }, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "mouseup",  () => { disableSliderTempCanvas(); }, false );
+    document.getElementById( "trueSliderX" ).addEventListener( "touchend", () => { disableSliderTempCanvas(); }, false );
+    document.getElementById( "trueSliderY" ).addEventListener( "touchend", () => { disableSliderTempCanvas(); }, false );
     
     // Channel selector event
     document.querySelectorAll( ".channelSelector" ).forEach( function( item ) { item.addEventListener( "click", ( e ) => { onChannelSelect( e ); e.preventDefault(); }, false ); } );
@@ -445,11 +454,11 @@ function setButtonEnable( buttonName, status ) {
 
 function showProcessSpinner( status ) {
     if ( status ) {
-        document.querySelectorAll( ".spinnerWrap" ).forEach( function( item ) {
+        document.querySelectorAll( ".spinnerWrap" ).forEach( ( item ) => {
             item.style = "display: block";
         } );
     } else {
-        document.querySelectorAll( ".spinnerWrap" ).forEach( function( item ) {
+        document.querySelectorAll( ".spinnerWrap" ).forEach( ( item ) => {
             item.style = "display: none";
         } );
     }
