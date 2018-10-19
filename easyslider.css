@@ -13,6 +13,12 @@ input[type=range].easyslider {
     -webkit-touch-callout: none;
 }
 
+input[type=range].easyslider:disabled {
+    /* Android版Firefox用 */
+    background-color: transparent;
+    border: 0;
+}
+
 input[type=range].easyslider:focus {
     outline: none;
 }
