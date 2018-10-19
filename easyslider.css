@@ -1,0 +1,74 @@
+/* 以下のサイトを使用させていただきました
+ * https://www.g200kg.com/archives/2017/12/input-typerange.html
+ * https://github.com/danielstern/range.css
+ *  
+ */
+
+input[type=range].easyslider {
+    height: 28px;
+    outline: none;
+    -webkit-appearance: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+input[type=range].easyslider:focus {
+    outline: none;
+}
+
+input[type=range].easyslider::-moz-focus-outer {
+    border: 0;
+}
+
+/* レール */
+input[type=range].easyslider::-webkit-slider-runnable-track {
+    background-color: #E5E5E5;
+    height: 12px;
+    border: 1px solid #7F7F7F;
+    border-radius: 6px;
+    cursor: pointer;
+}
+input[type=range].easyslider::-moz-range-track {
+    background-color: #E5E5E5;
+    height: 12px;
+    border: 1px solid #7F7F7F;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* 玉 */
+input[type=range].easyslider::-webkit-slider-thumb {
+    margin-top: -9px;  /* Webkitではなぜかずらす必要がある */
+    height: 28px;
+    width: 28px;
+    background-color: #1E90FF;
+    border: 0;
+    border-radius: 50%;
+    box-shadow: 0 2px 3px -1px #BBBBBB;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+input[type=range].easyslider::-moz-range-thumb {
+    height: 28px;
+    width: 28px;
+    background-color: #1E90FF;
+    border: 0;
+    border-radius: 50%;
+    box-shadow: 0 2px 3px -1px #BBBBBB;
+    cursor: pointer;
+}
+input[type=range].easyslider:enabled:hover::-webkit-slider-thumb {
+    filter: brightness( 1.2 );
+}
+input[type=range].easyslider:enabled:hover::-moz-range-thumb {
+    filter: brightness( 1.2 );
+}
+input[type=range].easyslider:disabled::-webkit-slider-thumb {
+    background-color: #C2C2C2;
+    box-shadow: 0 0 0 0;
+}
+input[type=range].easyslider:disabled::-moz-range-thumb {
+    background-color: #C2C2C2;
+    box-shadow: 0 0 0 0;
+}
