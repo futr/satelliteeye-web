@@ -218,6 +218,15 @@ figcaption > .imglinkcs {
     margin-right: 4px;
 }
 
+/* 画面が小さい場合 */
+@media only screen and ( max-width: 700px ) {
+    .easybtn {
+        padding: 6px;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+}
+
 /* 印刷時 */
 @media print {	
 	@page {
