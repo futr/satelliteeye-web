@@ -363,6 +363,9 @@ window.addEventListener( "DOMContentLoaded", () => {
     // Channel selector event
     document.querySelectorAll( ".channelSelector" ).forEach( function( item ) { item.addEventListener( "click", ( e ) => { onChannelSelect( e ); e.preventDefault(); }, false ); } );
     
+    // iOS enable active state
+    document.querySelectorAll( ".easybtn" ).forEach( function( item ) { item.addEventListener( "touchstart", () => {}, false ); } );
+    
     // Reset UI
     setSliderEnable( false );
 });
