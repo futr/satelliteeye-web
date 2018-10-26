@@ -295,16 +295,16 @@ function postShiftTrue()
 
 function mouseMoveOnNDVIImg( evt ) {
     // Mouse move event handler of NDVI Image
-	if ( !NDVICanvas ) return;
-	
-	var ix = evt.offsetX / evt.target.offsetWidth * NDVICanvas.width;
+    if ( !NDVICanvas ) return;
+    
+    var ix = evt.offsetX / evt.target.offsetWidth * NDVICanvas.width;
     var iy = evt.offsetY / evt.target.offsetHeight * NDVICanvas.height;
-	
+    
     if ( ix < 0 || iy < 0 || ix >= NDVICanvas.width || iy >= NDVICanvas.height ) {
         return;
     }
     
-	var px = NDVICanvas.getContext('2d').getImageData( ix, iy, 1, 1 ); 
+    var px = NDVICanvas.getContext('2d').getImageData( ix, iy, 1, 1 ); 
     
     document.getElementById( "NDVIPixelValue" ).innerHTML = "NDVI値 : " + ( px.data[0] / PMAX * 2 - 1 ).toFixed( 3 );
 }
@@ -384,7 +384,7 @@ function processImage() {
     
     // Check size
     if ( w != IRImgHandler.iw || h != IRImgHandler.ih ) {
-		alert( "同じ大きさの画像を選択してください" );
+        alert( "同じ大きさの画像を選択してください" );
         return;
     }
     
