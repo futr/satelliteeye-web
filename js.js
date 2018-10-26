@@ -126,7 +126,7 @@ ImageHandler.prototype.handleEvent = function( event ) {
             
             // Calc size
             obj.iw = IMG_WIDTH;
-            obj.ih = originImg.height / originImg.width * IMG_WIDTH;
+            obj.ih = parseInt( originImg.height / originImg.width * IMG_WIDTH );
             
             // Init canvas
             obj.canvas.width = obj.iw;
